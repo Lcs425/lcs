@@ -153,15 +153,19 @@ let allData = loadAllData();
 // ============ 认证 ============
 let authMode = 'login';
 
-document.getElementById('toggleLink').addEventListener('click', () => {
-  authMode = authMode === 'login' ? 'register' : 'login';
+function renderAuthUI() {
   document.getElementById('authBtn').textContent = authMode === 'login' ? '登 录' : '注 册';
   document.getElementById('authSubtitle').textContent = authMode === 'login' ? '登录你的账户' : '创建新账户';
   document.getElementById('authToggle').innerHTML = authMode === 'login'
-    ? '还没有账户？<a id="toggleLink">立即注册</a>'
-    : '已有账户？<a id="toggleLink">去登录</a>';
-  document.getElementById('toggleLink').addEventListener('click', arguments.callee);
-});
+    ? '还没有账户？<a id="toggleLink" href="javascript:void(0)">立即注册</a>'
+    : '已有账户？<a id="toggleLink" href="javascript:void(0)">去登录</a>';
+  document.getElementById('toggleLink').onclick = function() {
+    authMode = authMode === 'login' ? 'register' : 'login';
+    renderAuthUI();
+  };
+}
+
+renderAuthUI();
 
 document.getElementById('authBtn').addEventListener('click', () => {
   const uname = document.getElementById('username').value.trim();
@@ -175,7 +179,10 @@ document.getElementById('authBtn').addEventListener('click', () => {
     allData.users[uname] = { password: pwd, createdAt: new Date().toISOString() };
     saveAllData(allData);
     alert('注册成功，请登录');
-    document.getElementById('toggleLink').click();
+    authMode = 'login';
+    renderAuthUI();
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
     return;
   }
 
@@ -195,6 +202,8 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
   document.getElementById('appSection').classList.add('hidden');
   document.getElementById('username').value = '';
   document.getElementById('password').value = '';
+  authMode = 'login';
+  renderAuthUI();
 });
 
 // ============ 应用初始化 ============
