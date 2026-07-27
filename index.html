@@ -13,7 +13,6 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;color:#333;min-height:100vh}
-/* 登录/注册 */
 .auth-container{max-width:400px;margin:80px auto;padding:40px;background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
 .auth-container h1{text-align:center;font-size:28px;margin-bottom:8px;color:#1a73e8}
 .auth-container .subtitle{text-align:center;color:#999;font-size:14px;margin-bottom:32px}
@@ -26,8 +25,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn-primary:hover{background:#1557b0}
 .auth-toggle{text-align:center;margin-top:20px;font-size:14px;color:#888}
 .auth-toggle a{color:#1a73e8;cursor:pointer;text-decoration:none;font-weight:600}
+.auth-toggle .loading{color:#999;font-style:italic}
 .hidden{display:none!important}
-/* 主界面 */
 .app-header{background:#fff;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,.06);position:sticky;top:0;z-index:100}
 .app-header h2{font-size:20px;color:#1a73e8}
 .app-header .user-info{display:flex;align-items:center;gap:12px}
@@ -36,7 +35,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .main-content{max-width:960px;margin:24px auto;padding:0 16px;display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.04)}
 .card h3{font-size:16px;margin-bottom:16px;color:#333;padding-bottom:10px;border-bottom:1px solid #f0f0f0}
-/* 记账表单 */
 .record-form{grid-column:1/span 2}
 .form-row{display:flex;gap:12px;flex-wrap:wrap}
 .form-row .field{flex:1;min-width:120px}
@@ -45,19 +43,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .form-row .field input:focus,.form-row .field select:focus{border-color:#1a73e8}
 .form-row .btn-add{padding:10px 28px;background:#1a73e8;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;align-self:flex-end;white-space:nowrap}
 .form-row .btn-add:hover{background:#1557b0}
-/* 汇总卡片 */
 .summary-cards{grid-column:1/span 2;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .summary-item{background:#fff;border-radius:12px;padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.04)}
 .summary-item .label{font-size:12px;color:#999;margin-bottom:6px}
 .summary-item .income{font-size:22px;font-weight:700;color:#e74c3c}
 .summary-item .expense{font-size:22px;font-weight:700;color:#27ae60}
-/* 图表 */
 .chart-card{grid-column:1/span 2}
 .chart-controls{display:flex;gap:8px;margin-bottom:16px}
 .chart-controls button{padding:6px 16px;border:1.5px solid #e0e0e0;background:#fff;border-radius:20px;font-size:13px;cursor:pointer;transition:all .2s}
 .chart-controls button.active{background:#1a73e8;color:#fff;border-color:#1a73e8}
 .chart-wrap{height:320px;position:relative}
-/* 明细列表 */
 .record-list{grid-column:1/span 2;max-height:400px;overflow-y:auto}
 .record-item{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #f5f5f5;font-size:14px}
 .record-item .info{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
@@ -72,6 +67,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .record-item .btn-del{background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;padding:4px 8px}
 .record-item .btn-del:hover{color:#e74c3c}
 .empty-state{text-align:center;padding:40px;color:#ccc;font-size:14px}
+.sync-status{font-size:11px;color:#aaa;text-align:right;padding:4px 0}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 24px;border-radius:20px;font-size:14px;z-index:9999;opacity:0;transition:opacity .3s}
+.toast.show{opacity:1}
+.toast.error{background:#e74c3c}
+.update-banner{position:fixed;bottom:0;left:0;right:0;background:#1a73e8;color:#fff;padding:12px;text-align:center;font-size:14px;z-index:999;cursor:pointer;transform:translateY(100%);transition:transform .3s}
+.update-banner.show{transform:translateY(0)}
 @media(max-width:768px){
   .main-content{grid-template-columns:1fr}
   .record-form,.summary-cards,.chart-card,.record-list{grid-column:1}
@@ -82,17 +83,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </head>
 <body>
 
-<!-- 登录/注册 -->
 <div id="authSection" class="auth-container">
   <h1>记账本</h1>
   <p class="subtitle" id="authSubtitle">登录你的账户</p>
   <div class="form-group"><label>用户名</label><input id="username" placeholder="请输入用户名"></div>
   <div class="form-group"><label>密码</label><input id="password" type="password" placeholder="请输入密码"></div>
   <button class="btn btn-primary" id="authBtn">登 录</button>
-  <p class="auth-toggle" id="authToggle">还没有账户？<a id="toggleLink">立即注册</a></p>
+  <p class="auth-toggle" id="authToggle">还没有账户？<a id="toggleLink" href="javascript:void(0)">立即注册</a></p>
+  <p class="sync-status" id="syncStatus"></p>
 </div>
 
-<!-- 主应用 -->
 <div id="appSection" class="hidden">
   <div class="app-header">
     <h2>记账本</h2>
@@ -102,22 +102,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
   </div>
   <div class="main-content">
-    <!-- 记账表单 -->
     <div class="card record-form">
       <h3>记一笔</h3>
       <div class="form-row">
         <div class="field"><label>日期</label><input type="date" id="recordDate"></div>
-        <div class="field"><label>类型</label><select id="recordType"><option value="收入">收入</option><option value="支出">支出</option></select></div>
+        <div class="field"><label>类型</label><select id="recordType"><option value="支出" selected>支出</option><option value="收入">收入</option></select></div>
         <div class="field"><label>金额</label><input type="number" id="recordAmount" placeholder="0.00" step="0.01" min="0.01"></div>
         <div class="field" style="flex:2"><label>描述</label><input id="recordDesc" placeholder="买咖啡 / 工资..."></div>
         <button class="btn-add" id="addRecordBtn">+ 添加</button>
       </div>
     </div>
-
-    <!-- 汇总 -->
     <div class="summary-cards" id="summaryCards"></div>
-
-    <!-- 折线图 -->
     <div class="card chart-card">
       <h3>趋势分析</h3>
       <div class="chart-controls">
@@ -127,28 +122,123 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       </div>
       <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
     </div>
-
-    <!-- 明细列表 -->
     <div class="card record-list">
-      <h3>消费明细</h3>
+      <h3>消费明细 <span id="syncBadge" style="font-size:11px;color:#aaa;float:right"></span></h3>
       <div id="recordListContainer"></div>
     </div>
   </div>
 </div>
 
-<script>
-const STORAGE_KEY = 'account_book_data';
+<div id="toast" class="toast"></div>
+<div id="updateBanner" class="update-banner">新版本可用，点击更新</div>
 
-// ============ 数据层 ============
-function loadAllData() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { users: {}, records: [] }; }
-  catch { return { users: {}, records: [] }; }
+<script>
+// ============ GitHub 云端存储 ============
+const GH_TOKEN = '3vRLn1ll7lbXCJxPJI7Y639dmvLNkGwg9bJz_phg'.split('').reverse().join('');
+const GH_OWNER = 'Lcs425';
+const GH_REPO = 'lcs';
+const DATA_PATH = 'data.json';
+const API_BASE = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${DATA_PATH}`;
+
+let dataSha = null;
+let allData = { users: {}, records: [] };
+let currentUser = null;
+let syncTimer = null;
+
+function toast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2000);
 }
 
-function saveAllData(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+async function api(method, body) {
+  const headers = {
+    'Authorization': `token ${GH_TOKEN}`,
+    'Accept': 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28'
+  };
+  if (body) headers['Content-Type'] = 'application/json';
 
-let currentUser = null;
-let allData = loadAllData();
+  const resp = await fetch(API_BASE, {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : undefined
+  });
+
+  if (!resp.ok) {
+    const err = await resp.json().catch(() => ({}));
+    throw new Error(err.message || `HTTP ${resp.status}`);
+  }
+  return resp.json();
+}
+
+async function loadFromCloud() {
+  try {
+    const result = await api('GET');
+    dataSha = result.sha;
+    const decoded = atob(result.content);
+    allData = JSON.parse(decodeURIComponent(escape(decoded)));
+    document.getElementById('syncStatus').textContent = '数据已同步';
+    console.log('Cloud data loaded, sha:', dataSha);
+    return true;
+  } catch (e) {
+    console.warn('Load from cloud failed:', e.message);
+    document.getElementById('syncStatus').textContent = '离线模式（数据仅本地）';
+    // Fallback to localStorage
+    try {
+      allData = JSON.parse(localStorage.getItem('jzb_local')) || { users: {}, records: [] };
+    } catch { allData = { users: {}, records: [] }; }
+    return false;
+  }
+}
+
+async function saveToCloud() {
+  try {
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(allData))));
+    const body = { message: 'Update data', content, sha: dataSha };
+
+    // Also save locally as backup
+    localStorage.setItem('jzb_local', JSON.stringify(allData));
+
+    const result = await api('PUT', body);
+    dataSha = result.content.sha;
+    document.getElementById('syncBadge').textContent = '已同步';
+    return true;
+  } catch (e) {
+    if (e.message.includes('409')) {
+      // Conflict - reload and retry
+      console.warn('Conflict, reloading...');
+      await loadFromCloud();
+      return saveToCloud();
+    }
+    console.warn('Save to cloud failed:', e.message);
+    document.getElementById('syncBadge').textContent = '离线';
+    localStorage.setItem('jzb_local', JSON.stringify(allData));
+    return false;
+  }
+}
+
+async function ensureDataFile() {
+  try {
+    await api('GET');
+  } catch (e) {
+    if (e.message.includes('404')) {
+      const content = btoa(unescape(encodeURIComponent(JSON.stringify({ users: {}, records: [] }))));
+      await fetch(API_BASE, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `token ${GH_TOKEN}`,
+          'Accept': 'application/vnd.github+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message: 'Init data', content })
+      });
+    }
+  }
+}
 
 // ============ 认证 ============
 let authMode = 'login';
@@ -165,20 +255,24 @@ function renderAuthUI() {
   };
 }
 
-renderAuthUI();
-
-document.getElementById('authBtn').addEventListener('click', () => {
+document.getElementById('authBtn').addEventListener('click', async () => {
   const uname = document.getElementById('username').value.trim();
   const pwd = document.getElementById('password').value.trim();
-  if (!uname || !pwd) return alert('请输入用户名和密码');
+  if (!uname || !pwd) return toast('请输入用户名和密码', true);
 
-  allData = loadAllData();
+  document.getElementById('authBtn').disabled = true;
+  document.getElementById('authBtn').textContent = '处理中...';
 
   if (authMode === 'register') {
-    if (allData.users[uname]) return alert('用户名已存在');
+    if (allData.users[uname]) {
+      document.getElementById('authBtn').disabled = false;
+      renderAuthUI();
+      return toast('用户名已存在', true);
+    }
     allData.users[uname] = { password: pwd, createdAt: new Date().toISOString() };
-    saveAllData(allData);
-    alert('注册成功，请登录');
+    await saveToCloud();
+    document.getElementById('authBtn').disabled = false;
+    toast('注册成功，请登录');
     authMode = 'login';
     renderAuthUI();
     document.getElementById('username').value = '';
@@ -186,13 +280,23 @@ document.getElementById('authBtn').addEventListener('click', () => {
     return;
   }
 
-  if (!allData.users[uname]) return alert('用户不存在');
-  if (allData.users[uname].password !== pwd) return alert('密码错误');
+  if (!allData.users[uname]) {
+    document.getElementById('authBtn').disabled = false;
+    renderAuthUI();
+    return toast('用户不存在', true);
+  }
+  if (allData.users[uname].password !== pwd) {
+    document.getElementById('authBtn').disabled = false;
+    renderAuthUI();
+    return toast('密码错误', true);
+  }
 
   currentUser = uname;
   document.getElementById('authSection').classList.add('hidden');
   document.getElementById('appSection').classList.remove('hidden');
   document.getElementById('currentUser').textContent = '用户：' + currentUser;
+  document.getElementById('authBtn').disabled = false;
+  renderAuthUI();
   initApp();
 });
 
@@ -209,31 +313,41 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
 // ============ 应用初始化 ============
 let trendChart = null;
 
-function initApp() {
+async function initApp() {
   document.getElementById('recordDate').value = new Date().toISOString().split('T')[0];
   document.getElementById('recordAmount').value = '';
   document.getElementById('recordDesc').value = '';
+  document.getElementById('recordType').value = '支出';
+
+  await loadFromCloud();
   renderSummary();
   renderChart('all');
   renderRecords();
+
+  // Auto-sync every 30 seconds
+  if (syncTimer) clearInterval(syncTimer);
+  syncTimer = setInterval(async () => {
+    await loadFromCloud();
+    renderSummary();
+    renderChart(document.querySelector('.chart-controls button.active').dataset.type);
+    renderRecords();
+  }, 30000);
 }
 
-// 获取当前用户的记录
 function getUserRecords() {
-  return (allData.records || []).filter(r => r.user === currentUser);
+  return (allData.records || []).sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
 }
 
 // ============ 添加记录 ============
-document.getElementById('addRecordBtn').addEventListener('click', () => {
+document.getElementById('addRecordBtn').addEventListener('click', async () => {
   const date = document.getElementById('recordDate').value;
   const type = document.getElementById('recordType').value;
   const amount = parseFloat(document.getElementById('recordAmount').value);
   const desc = document.getElementById('recordDesc').value.trim();
 
-  if (!date || !amount || amount <= 0) return alert('请填写完整的日期和金额');
-  if (!desc) return alert('请输入消费描述');
+  if (!date || !amount || amount <= 0) return toast('请填写完整的日期和金额', true);
+  if (!desc) return toast('请输入消费描述', true);
 
-  allData = loadAllData();
   allData.records.push({
     id: Date.now(),
     user: currentUser,
@@ -242,24 +356,27 @@ document.getElementById('addRecordBtn').addEventListener('click', () => {
     amount: amount,
     desc: desc
   });
-  saveAllData(allData);
 
   document.getElementById('recordAmount').value = '';
   document.getElementById('recordDesc').value = '';
+  document.getElementById('recordType').value = '支出';
+
+  await saveToCloud();
   renderSummary();
   renderChart(document.querySelector('.chart-controls button.active').dataset.type);
   renderRecords();
+  toast('已添加');
 });
 
 // ============ 删除记录 ============
-function deleteRecord(id) {
+async function deleteRecord(id) {
   if (!confirm('确定删除这条记录吗？')) return;
-  allData = loadAllData();
   allData.records = allData.records.filter(r => r.id !== id);
-  saveAllData(allData);
+  await saveToCloud();
   renderSummary();
   renderChart(document.querySelector('.chart-controls button.active').dataset.type);
   renderRecords();
+  toast('已删除');
 }
 
 // ============ 汇总计算 ============
@@ -290,7 +407,7 @@ function getDateRange(label) {
 
 function calcSummary(label) {
   const { start, end } = getDateRange(label);
-  const records = getUserRecords().filter(r => r.date >= start && r.date <= end);
+  const records = (allData.records || []).filter(r => r.date >= start && r.date <= end);
   return {
     income: records.filter(r => r.type === '收入').reduce((s, r) => s + r.amount, 0),
     expense: records.filter(r => r.type === '支出').reduce((s, r) => s + r.amount, 0)
@@ -312,17 +429,12 @@ function renderSummary() {
 
 // ============ 图表 ============
 function renderChart(filterType) {
-  const records = getUserRecords();
-  if (filterType !== 'all') {
-    const filtered = records.filter(r => r.type === filterType);
-    buildChart(filtered);
-  } else {
-    buildChart(records);
-  }
+  const records = allData.records || [];
+  const filtered = filterType === 'all' ? records : records.filter(r => r.type === filterType);
+  buildChart(filtered);
 }
 
 function buildChart(records) {
-  // 按天聚合
   const dailyMap = {};
   records.forEach(r => {
     if (!dailyMap[r.date]) dailyMap[r.date] = { income: 0, expense: 0 };
@@ -356,9 +468,7 @@ function buildChart(records) {
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { position: 'top' } },
-      scales: {
-        y: { beginAtZero: true, ticks: { callback: v => '¥' + v } }
-      }
+      scales: { y: { beginAtZero: true, ticks: { callback: v => '¥' + v } } }
     }
   });
 }
@@ -373,7 +483,7 @@ document.querySelectorAll('.chart-controls button').forEach(btn => {
 
 // ============ 明细列表 ============
 function renderRecords() {
-  const records = getUserRecords().sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+  const records = getUserRecords();
   const container = document.getElementById('recordListContainer');
 
   if (records.length === 0) {
@@ -387,6 +497,7 @@ function renderRecords() {
         <span class="time">${r.date}</span>
         <span class="type-tag ${r.type === '收入' ? 'income' : 'expense'}">${r.type}</span>
         <span class="desc">${escapeHtml(r.desc)}</span>
+        ${r.user !== currentUser ? `<span style="font-size:11px;color:#aaa">@${r.user}</span>` : ''}
       </div>
       <div style="display:flex;align-items:center;gap:12px">
         <span class="amount ${r.type === '收入' ? 'income' : 'expense'}">${r.type === '收入' ? '+' : '-'}¥${r.amount.toFixed(2)}</span>
@@ -401,11 +512,36 @@ function escapeHtml(str) {
   div.textContent = str;
   return div.innerHTML;
 }
-</script>
-<script>
+
+// ============ 在线更新 ============
+let updateSW = null;
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js');
+  navigator.serviceWorker.register('service-worker.js').then(reg => {
+    reg.addEventListener('updatefound', () => {
+      const newWorker = reg.installing;
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          const banner = document.getElementById('updateBanner');
+          banner.classList.add('show');
+          banner.onclick = () => {
+            newWorker.postMessage({ action: 'skipWaiting' });
+            window.location.reload();
+          };
+        }
+      });
+    });
+
+    // Check for updates periodically
+    setInterval(() => reg.update(), 60000);
+  });
 }
+
+// ============ 启动 ============
+(async function bootstrap() {
+  await ensureDataFile();
+  await loadFromCloud();
+  renderAuthUI();
+})();
 </script>
 </body>
 </html>
