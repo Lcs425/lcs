@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>记账本</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="记账本">
+<link rel="apple-touch-icon" href="icon-192.png">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;color:#333;min-height:100vh}
+/* 登录/注册 */
+.auth-container{max-width:400px;margin:80px auto;padding:40px;background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.auth-container h1{text-align:center;font-size:28px;margin-bottom:8px;color:#1a73e8}
+.auth-container .subtitle{text-align:center;color:#999;font-size:14px;margin-bottom:32px}
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-size:14px;font-weight:600;margin-bottom:6px;color:#555}
+.form-group input{width:100%;padding:12px 16px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:15px;outline:none;transition:border .2s}
+.form-group input:focus{border-color:#1a73e8}
+.btn{width:100%;padding:13px;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-primary{background:#1a73e8;color:#fff}
+.btn-primary:hover{background:#1557b0}
+.auth-toggle{text-align:center;margin-top:20px;font-size:14px;color:#888}
+.auth-toggle a{color:#1a73e8;cursor:pointer;text-decoration:none;font-weight:600}
+.hidden{display:none!important}
+/* 主界面 */
+.app-header{background:#fff;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,.06);position:sticky;top:0;z-index:100}
+.app-header h2{font-size:20px;color:#1a73e8}
+.app-header .user-info{display:flex;align-items:center;gap:12px}
+.app-header .user-info span{font-size:14px;color:#666}
+.app-header .btn-logout{background:#f5f5f5;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;color:#666}
+.main-content{max-width:960px;margin:24px auto;padding:0 16px;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.card h3{font-size:16px;margin-bottom:16px;color:#333;padding-bottom:10px;border-bottom:1px solid #f0f0f0}
+/* 记账表单 */
+.record-form{grid-column:1/span 2}
+.form-row{display:flex;gap:12px;flex-wrap:wrap}
+.form-row .field{flex:1;min-width:120px}
+.form-row .field label{display:block;font-size:13px;font-weight:600;margin-bottom:4px;color:#555}
+.form-row .field input,.form-row .field select{width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none}
+.form-row .field input:focus,.form-row .field select:focus{border-color:#1a73e8}
+.form-row .btn-add{padding:10px 28px;background:#1a73e8;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;align-self:flex-end;white-space:nowrap}
+.form-row .btn-add:hover{background:#1557b0}
+/* 汇总卡片 */
+.summary-cards{grid-column:1/span 2;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.summary-item{background:#fff;border-radius:12px;padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.summary-item .label{font-size:12px;color:#999;margin-bottom:6px}
+.summary-item .income{font-size:22px;font-weight:700;color:#e74c3c}
+.summary-item .expense{font-size:22px;font-weight:700;color:#27ae60}
+/* 图表 */
+.chart-card{grid-column:1/span 2}
+.chart-controls{display:flex;gap:8px;margin-bottom:16px}
+.chart-controls button{padding:6px 16px;border:1.5px solid #e0e0e0;background:#fff;border-radius:20px;font-size:13px;cursor:pointer;transition:all .2s}
+.chart-controls button.active{background:#1a73e8;color:#fff;border-color:#1a73e8}
+.chart-wrap{height:320px;position:relative}
+/* 明细列表 */
+.record-list{grid-column:1/span 2;max-height:400px;overflow-y:auto}
+.record-item{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #f5f5f5;font-size:14px}
+.record-item .info{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.record-item .type-tag{padding:2px 10px;border-radius:12px;font-size:12px;font-weight:600}
+.record-item .type-tag.income{background:#fdecea;color:#e74c3c}
+.record-item .type-tag.expense{background:#e8f5e9;color:#27ae60}
+.record-item .amount{font-size:16px;font-weight:700}
+.record-item .amount.income{color:#e74c3c}
+.record-item .amount.expense{color:#27ae60}
+.record-item .desc{color:#888;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.record-item .time{color:#aaa;font-size:12px}
+.record-item .btn-del{background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;padding:4px 8px}
+.record-item .btn-del:hover{color:#e74c3c}
+.empty-state{text-align:center;padding:40px;color:#ccc;font-size:14px}
+@media(max-width:768px){
+  .main-content{grid-template-columns:1fr}
+  .record-form,.summary-cards,.chart-card,.record-list{grid-column:1}
+  .summary-cards{grid-template-columns:repeat(2,1fr)}
+  .form-row .field{min-width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- 登录/注册 -->
+<div id="authSection" class="auth-container">
+  <h1>记账本</h1>
+  <p class="subtitle" id="authSubtitle">登录你的账户</p>
+  <div class="form-group"><label>用户名</label><input id="username" placeholder="请输入用户名"></div>
+  <div class="form-group"><label>密码</label><input id="password" type="password" placeholder="请输入密码"></div>
+  <button class="btn btn-primary" id="authBtn">登 录</button>
+  <p class="auth-toggle" id="authToggle">还没有账户？<a id="toggleLink">立即注册</a></p>
+</div>
+
+<!-- 主应用 -->
+<div id="appSection" class="hidden">
+  <div class="app-header">
+    <h2>记账本</h2>
+    <div class="user-info">
+      <span id="currentUser"></span>
+      <button class="btn-logout" id="logoutBtn">退出</button>
+    </div>
+  </div>
+  <div class="main-content">
+    <!-- 记账表单 -->
+    <div class="card record-form">
+      <h3>记一笔</h3>
+      <div class="form-row">
+        <div class="field"><label>日期</label><input type="date" id="recordDate"></div>
+        <div class="field"><label>类型</label><select id="recordType"><option value="收入">收入</option><option value="支出">支出</option></select></div>
+        <div class="field"><label>金额</label><input type="number" id="recordAmount" placeholder="0.00" step="0.01" min="0.01"></div>
+        <div class="field" style="flex:2"><label>描述</label><input id="recordDesc" placeholder="买咖啡 / 工资..."></div>
+        <button class="btn-add" id="addRecordBtn">+ 添加</button>
+      </div>
+    </div>
+
+    <!-- 汇总 -->
+    <div class="summary-cards" id="summaryCards"></div>
+
+    <!-- 折线图 -->
+    <div class="card chart-card">
+      <h3>趋势分析</h3>
+      <div class="chart-controls">
+        <button data-type="all" class="active">全部</button>
+        <button data-type="收入">收入</button>
+        <button data-type="支出">支出</button>
+      </div>
+      <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+    </div>
+
+    <!-- 明细列表 -->
+    <div class="card record-list">
+      <h3>消费明细</h3>
+      <div id="recordListContainer"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'account_book_data';
+
+// ============ 数据层 ============
+function loadAllData() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { users: {}, records: [] }; }
+  catch { return { users: {}, records: [] }; }
+}
+
+function saveAllData(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+
+let currentUser = null;
+let allData = loadAllData();
+
+// ============ 认证 ============
+let authMode = 'login';
+
+document.getElementById('toggleLink').addEventListener('click', () => {
+  authMode = authMode === 'login' ? 'register' : 'login';
+  document.getElementById('authBtn').textContent = authMode === 'login' ? '登 录' : '注 册';
+  document.getElementById('authSubtitle').textContent = authMode === 'login' ? '登录你的账户' : '创建新账户';
+  document.getElementById('authToggle').innerHTML = authMode === 'login'
+    ? '还没有账户？<a id="toggleLink">立即注册</a>'
+    : '已有账户？<a id="toggleLink">去登录</a>';
+  document.getElementById('toggleLink').addEventListener('click', arguments.callee);
+});
+
+document.getElementById('authBtn').addEventListener('click', () => {
+  const uname = document.getElementById('username').value.trim();
+  const pwd = document.getElementById('password').value.trim();
+  if (!uname || !pwd) return alert('请输入用户名和密码');
+
+  allData = loadAllData();
+
+  if (authMode === 'register') {
+    if (allData.users[uname]) return alert('用户名已存在');
+    allData.users[uname] = { password: pwd, createdAt: new Date().toISOString() };
+    saveAllData(allData);
+    alert('注册成功，请登录');
+    document.getElementById('toggleLink').click();
+    return;
+  }
+
+  if (!allData.users[uname]) return alert('用户不存在');
+  if (allData.users[uname].password !== pwd) return alert('密码错误');
+
+  currentUser = uname;
+  document.getElementById('authSection').classList.add('hidden');
+  document.getElementById('appSection').classList.remove('hidden');
+  document.getElementById('currentUser').textContent = '用户：' + currentUser;
+  initApp();
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  currentUser = null;
+  document.getElementById('authSection').classList.remove('hidden');
+  document.getElementById('appSection').classList.add('hidden');
+  document.getElementById('username').value = '';
+  document.getElementById('password').value = '';
+});
+
+// ============ 应用初始化 ============
+let trendChart = null;
+
+function initApp() {
+  document.getElementById('recordDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('recordAmount').value = '';
+  document.getElementById('recordDesc').value = '';
+  renderSummary();
+  renderChart('all');
+  renderRecords();
+}
+
+// 获取当前用户的记录
+function getUserRecords() {
+  return (allData.records || []).filter(r => r.user === currentUser);
+}
+
+// ============ 添加记录 ============
+document.getElementById('addRecordBtn').addEventListener('click', () => {
+  const date = document.getElementById('recordDate').value;
+  const type = document.getElementById('recordType').value;
+  const amount = parseFloat(document.getElementById('recordAmount').value);
+  const desc = document.getElementById('recordDesc').value.trim();
+
+  if (!date || !amount || amount <= 0) return alert('请填写完整的日期和金额');
+  if (!desc) return alert('请输入消费描述');
+
+  allData = loadAllData();
+  allData.records.push({
+    id: Date.now(),
+    user: currentUser,
+    date: date,
+    type: type,
+    amount: amount,
+    desc: desc
+  });
+  saveAllData(allData);
+
+  document.getElementById('recordAmount').value = '';
+  document.getElementById('recordDesc').value = '';
+  renderSummary();
+  renderChart(document.querySelector('.chart-controls button.active').dataset.type);
+  renderRecords();
+});
+
+// ============ 删除记录 ============
+function deleteRecord(id) {
+  if (!confirm('确定删除这条记录吗？')) return;
+  allData = loadAllData();
+  allData.records = allData.records.filter(r => r.id !== id);
+  saveAllData(allData);
+  renderSummary();
+  renderChart(document.querySelector('.chart-controls button.active').dataset.type);
+  renderRecords();
+}
+
+// ============ 汇总计算 ============
+function getDateRange(label) {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const s = d => d.toISOString().split('T')[0];
+  const day = 86400000;
+
+  switch (label) {
+    case '今日': return { start: s(today), end: s(new Date(today.getTime() + day - 1)) };
+    case '昨日': return { start: s(new Date(today - day)), end: s(new Date(today - 1)) };
+    case '本周': {
+      const d = today.getDay(); const monday = new Date(today - (d === 0 ? 6 : d - 1) * day);
+      return { start: s(monday), end: s(new Date(monday.getTime() + 6 * day)) };
+    }
+    case '上周': {
+      const d = today.getDay(); const lastMonday = new Date(today - ((d === 0 ? 6 : d - 1) + 7) * day);
+      return { start: s(lastMonday), end: s(new Date(lastMonday.getTime() + 6 * day)) };
+    }
+    case '本月': return { start: s(new Date(now.getFullYear(), now.getMonth(), 1)), end: s(new Date(now.getFullYear(), now.getMonth() + 1, 0)) };
+    case '上月': return { start: s(new Date(now.getFullYear(), now.getMonth() - 1, 1)), end: s(new Date(now.getFullYear(), now.getMonth(), 0)) };
+    case '本年': return { start: s(new Date(now.getFullYear(), 0, 1)), end: s(new Date(now.getFullYear(), 11, 31)) };
+    case '去年': return { start: s(new Date(now.getFullYear() - 1, 0, 1)), end: s(new Date(now.getFullYear() - 1, 11, 31)) };
+    default: return { start: s(today), end: s(today) };
+  }
+}
+
+function calcSummary(label) {
+  const { start, end } = getDateRange(label);
+  const records = getUserRecords().filter(r => r.date >= start && r.date <= end);
+  return {
+    income: records.filter(r => r.type === '收入').reduce((s, r) => s + r.amount, 0),
+    expense: records.filter(r => r.type === '支出').reduce((s, r) => s + r.amount, 0)
+  };
+}
+
+function renderSummary() {
+  const labels = ['今日', '昨日', '本周', '上周', '本月', '上月', '本年', '去年'];
+  const container = document.getElementById('summaryCards');
+  container.innerHTML = labels.map(l => {
+    const s = calcSummary(l);
+    return `<div class="summary-item">
+      <div class="label">${l}</div>
+      <div class="income">收入 ¥${s.income.toFixed(2)}</div>
+      <div class="expense">支出 ¥${s.expense.toFixed(2)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ============ 图表 ============
+function renderChart(filterType) {
+  const records = getUserRecords();
+  if (filterType !== 'all') {
+    const filtered = records.filter(r => r.type === filterType);
+    buildChart(filtered);
+  } else {
+    buildChart(records);
+  }
+}
+
+function buildChart(records) {
+  // 按天聚合
+  const dailyMap = {};
+  records.forEach(r => {
+    if (!dailyMap[r.date]) dailyMap[r.date] = { income: 0, expense: 0 };
+    dailyMap[r.date][r.type === '收入' ? 'income' : 'expense'] += r.amount;
+  });
+
+  const dates = Object.keys(dailyMap).sort();
+  const incomeData = dates.map(d => dailyMap[d].income);
+  const expenseData = dates.map(d => dailyMap[d].expense);
+
+  const ctx = document.getElementById('trendChart').getContext('2d');
+  if (trendChart) trendChart.destroy();
+
+  const datasets = [];
+  if (incomeData.some(v => v > 0)) {
+    datasets.push({
+      label: '收入', data: incomeData, borderColor: '#e74c3c', backgroundColor: 'rgba(231,76,60,0.1)',
+      tension: 0.3, fill: true, pointRadius: 3, pointHoverRadius: 5
+    });
+  }
+  if (expenseData.some(v => v > 0)) {
+    datasets.push({
+      label: '支出', data: expenseData, borderColor: '#27ae60', backgroundColor: 'rgba(39,174,96,0.1)',
+      tension: 0.3, fill: true, pointRadius: 3, pointHoverRadius: 5
+    });
+  }
+
+  trendChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels: dates, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top' } },
+      scales: {
+        y: { beginAtZero: true, ticks: { callback: v => '¥' + v } }
+      }
+    }
+  });
+}
+
+document.querySelectorAll('.chart-controls button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.chart-controls button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderChart(btn.dataset.type);
+  });
+});
+
+// ============ 明细列表 ============
+function renderRecords() {
+  const records = getUserRecords().sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+  const container = document.getElementById('recordListContainer');
+
+  if (records.length === 0) {
+    container.innerHTML = '<div class="empty-state">暂无记录，快去记一笔吧</div>';
+    return;
+  }
+
+  container.innerHTML = records.map(r => `
+    <div class="record-item">
+      <div class="info">
+        <span class="time">${r.date}</span>
+        <span class="type-tag ${r.type === '收入' ? 'income' : 'expense'}">${r.type}</span>
+        <span class="desc">${escapeHtml(r.desc)}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="amount ${r.type === '收入' ? 'income' : 'expense'}">${r.type === '收入' ? '+' : '-'}¥${r.amount.toFixed(2)}</span>
+        <button class="btn-del" onclick="deleteRecord(${r.id})">×</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js');
+}
+</script>
+</body>
+</html>
