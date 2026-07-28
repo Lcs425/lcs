@@ -170,7 +170,7 @@ async function api(method, body) {
 
   if (!resp.ok) {
     const err = await resp.json().catch(() => ({}));
-    throw new Error(err.message || `HTTP ${resp.status}`);
+    throw new Error(`HTTP ${resp.status}: ${err.message || 'Unknown'}`);
   }
   return resp.json();
 }
@@ -195,12 +195,11 @@ async function loadFromCloud() {
   }
 }
 
-async function saveToCloud() {
+async function saveToCloud(retryCount) {
+  retryCount = retryCount || 0;
   try {
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(allData))));
     const body = { message: 'Update data', content, sha: dataSha };
-
-    // Also save locally as backup
     localStorage.setItem('jzb_local', JSON.stringify(allData));
 
     const result = await api('PUT', body);
@@ -208,13 +207,10 @@ async function saveToCloud() {
     document.getElementById('syncBadge').textContent = '已同步';
     return true;
   } catch (e) {
-    if (e.message.includes('409')) {
-      // Conflict - reload and retry
-      console.warn('Conflict, reloading...');
+    if (e.message.includes('409') && retryCount < 3) {
       await loadFromCloud();
-      return saveToCloud();
+      return saveToCloud(retryCount + 1);
     }
-    console.warn('Save to cloud failed:', e.message);
     document.getElementById('syncBadge').textContent = '离线';
     localStorage.setItem('jzb_local', JSON.stringify(allData));
     return false;
@@ -236,6 +232,7 @@ async function ensureDataFile() {
         },
         body: JSON.stringify({ message: 'Init data', content })
       });
+      await loadFromCloud();
     }
   }
 }
