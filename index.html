@@ -2,87 +2,94 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="记账本">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1a1a2e">
 <title>记账本</title>
 <link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="记账本">
 <link rel="apple-touch-icon" href="icon-192.png">
-<meta name="theme-color" content="#1a73e8">
 <style>
+html,body{height:100%;width:100%;margin:0;padding:0;overflow-x:hidden;background:#1a1a2e}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;color:#333;min-height:100vh;font-size:16px;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#e0e0e0;min-height:100vh;min-height:100dvh;font-size:16px;-webkit-tap-highlight-color:transparent}
 /* ===== Auth ===== */
-.auth-container{max-width:400px;margin:60px auto 0;padding:36px 24px;background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.08)}
-.auth-container h1{text-align:center;font-size:28px;margin-bottom:4px;color:#1a73e8}
-.auth-container .subtitle{text-align:center;color:#999;font-size:14px;margin-bottom:28px}
+.auth-container{max-width:400px;margin:60px auto 0;padding:36px 24px;background:#16213e;border-radius:16px;box-shadow:0 2px 16px rgba(0,0,0,.2)}
+.auth-container h1{text-align:center;font-size:28px;margin-bottom:4px;color:#e94560}
+.auth-container .subtitle{text-align:center;color:#8899aa;font-size:14px;margin-bottom:28px}
 .form-group{margin-bottom:18px}
-.form-group label{display:block;font-size:14px;font-weight:600;margin-bottom:6px;color:#555}
-.form-group input{width:100%;padding:14px 16px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:16px;outline:none;transition:border .2s;min-height:48px}
-.form-group input:focus{border-color:#1a73e8}
-.remember-row{display:flex;align-items:center;gap:8px;margin-bottom:18px;font-size:14px;color:#666}
-.remember-row input[type=checkbox]{width:18px;height:18px;accent-color:#1a73e8}
-.btn{width:100%;padding:14px;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;min-height:48px}
-.btn-primary{background:#1a73e8;color:#fff}
-.btn-primary:hover{background:#1557b0}
-.btn-primary:active{transform:scale(.98)}
-.auth-toggle{text-align:center;margin-top:18px;font-size:14px;color:#888}
-.auth-toggle a{color:#1a73e8;cursor:pointer;text-decoration:none;font-weight:600}
+.form-group label{display:block;font-size:14px;font-weight:600;margin-bottom:6px;color:#aabbcc}
+.form-group input{width:100%;padding:14px 16px;border:1.5px solid #2a3a5c;border-radius:10px;font-size:16px;outline:none;transition:border .2s,transform .15s;min-height:48px;background:#0f3460;color:#e0e0e0}
+.form-group input:focus{border-color:#e94560}
+.remember-row{display:flex;align-items:center;gap:8px;margin-bottom:18px;font-size:14px;color:#aabbcc}
+.remember-row input[type=checkbox]{width:18px;height:18px;accent-color:#e94560}
+.btn{width:100%;padding:14px;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:transform .15s,opacity .15s;min-height:48px}
+.btn-primary{background:#e94560;color:#fff}
+.btn-primary:active{transform:scale(.98);opacity:.85}
+.auth-toggle{text-align:center;margin-top:18px;font-size:14px;color:#8899aa}
+.auth-toggle a{color:#e94560;cursor:pointer;text-decoration:none;font-weight:600}
 .hidden{display:none!important}
 /* ===== App ===== */
-.app-header{background:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,.06);position:sticky;top:0;z-index:100;padding-top:max(12px,env(safe-area-inset-top))}
-.app-header h2{font-size:18px;color:#1a73e8}
+.app-header{background:#16213e;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;padding-top:max(12px,env(safe-area-inset-top))}
+.app-header h2{font-size:18px;color:#e94560}
 .app-header .user-info{display:flex;align-items:center;gap:10px}
-.app-header .user-info span{font-size:13px;color:#666}
-.app-header .btn-logout{background:#f5f5f5;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;color:#666;min-height:36px}
+.app-header .user-info span{font-size:13px;color:#aabbcc}
+.app-header .btn-logout{background:#0f3460;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;color:#aabbcc;min-height:36px;transition:transform .15s}
+.app-header .btn-logout:active{transform:scale(.96)}
 .main-content{max-width:960px;margin:16px auto 100px;padding:0 12px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 8px rgba(0,0,0,.04)}
-.card h3{font-size:15px;margin-bottom:12px;color:#333;padding-bottom:8px;border-bottom:1px solid #f0f0f0}
+.card{background:#16213e;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.card h3{font-size:15px;margin-bottom:12px;color:#e0e0e0;padding-bottom:8px;border-bottom:1px solid #1a2a4a}
 .record-form{grid-column:1/span 2}
 .form-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
 .form-row .field{flex:1;min-width:110px}
-.form-row .field label{display:block;font-size:12px;font-weight:600;margin-bottom:4px;color:#555}
-.form-row .field input,.form-row .field select{width:100%;padding:12px 10px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:15px;outline:none;min-height:44px}
-.form-row .field input:focus,.form-row .field select:focus{border-color:#1a73e8}
-.form-row .btn-add{padding:12px 24px;background:#1a73e8;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;min-height:44px}
-.form-row .btn-add:hover{background:#1557b0}
-.summary-cards{grid-column:1/span 2;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
-.summary-item{background:#fff;border-radius:10px;padding:14px 10px;text-align:center;box-shadow:0 1px 6px rgba(0,0,0,.04)}
-.summary-item .label{font-size:11px;color:#999;margin-bottom:4px}
-.summary-item .income{font-size:18px;font-weight:700;color:#e74c3c}
-.summary-item .expense{font-size:18px;font-weight:700;color:#27ae60}
+.form-row .field label{display:block;font-size:12px;font-weight:600;margin-bottom:4px;color:#aabbcc}
+.form-row .field input,.form-row .field select{width:100%;padding:12px 10px;border:1.5px solid #2a3a5c;border-radius:8px;font-size:15px;outline:none;min-height:44px;background:#0f3460;color:#e0e0e0;transition:border .2s}
+.form-row .field input:focus,.form-row .field select:focus{border-color:#e94560}
+.form-row .field select{appearance:none;-webkit-appearance:none}
+.form-row .btn-add{padding:12px 24px;background:#e94560;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;min-height:44px;transition:transform .15s,opacity .15s}
+.form-row .btn-add:active{transform:scale(.96);opacity:.85}
+.summary-cards{grid-column:1/span 2;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;contain:layout style}
+.summary-item{background:#16213e;border-radius:10px;padding:14px 10px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.summary-item .label{font-size:11px;color:#8899aa;margin-bottom:4px}
+.summary-item .income{font-size:18px;font-weight:700;color:#e94560}
+.summary-item .expense{font-size:18px;font-weight:700;color:#0f9}
 .chart-card{grid-column:1/span 2}
 .chart-controls{display:flex;gap:8px;margin-bottom:14px}
-.chart-controls button{padding:8px 16px;border:1.5px solid #e0e0e0;background:#fff;border-radius:20px;font-size:13px;cursor:pointer;transition:all .2s;min-height:36px}
-.chart-controls button.active{background:#1a73e8;color:#fff;border-color:#1a73e8}
+.chart-controls button{padding:8px 16px;border:1.5px solid #2a3a5c;background:#0f3460;border-radius:20px;font-size:13px;cursor:pointer;transition:transform .15s,opacity .15s;min-height:36px;color:#aabbcc}
+.chart-controls button.active{background:#e94560;color:#fff;border-color:#e94560}
+.chart-controls button:active{transform:scale(.96)}
 .chart-wrap{height:300px;position:relative}
-.record-list{grid-column:1/span 2;max-height:420px;overflow-y:auto}
-.record-item{display:flex;justify-content:space-between;align-items:center;padding:12px 12px;border-bottom:1px solid #f5f5f5;font-size:14px;gap:8px}
+.record-list{grid-column:1/span 2;max-height:420px;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;will-change:scroll-position}
+.record-item{display:flex;justify-content:space-between;align-items:center;padding:12px 12px;border-bottom:1px solid #1a2a4a;font-size:14px;gap:8px}
 .record-item .info{display:flex;gap:10px;align-items:center;flex-wrap:wrap;flex:1;min-width:0}
 .record-item .type-tag{padding:3px 10px;border-radius:12px;font-size:12px;font-weight:600;flex-shrink:0}
-.record-item .type-tag.income{background:#fdecea;color:#e74c3c}
-.record-item .type-tag.expense{background:#e8f5e9;color:#27ae60}
+.record-item .type-tag.income{background:rgba(233,69,96,.15);color:#e94560}
+.record-item .type-tag.expense{background:rgba(0,255,153,.12);color:#0f9}
 .record-item .amount{font-size:15px;font-weight:700;white-space:nowrap}
-.record-item .amount.income{color:#e74c3c}
-.record-item .amount.expense{color:#27ae60}
-.record-item .desc{color:#888;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.record-item .time{color:#aaa;font-size:11px;flex-shrink:0}
-.record-item .btn-del{background:none;border:none;color:#ccc;cursor:pointer;font-size:18px;padding:4px 10px;min-height:44px;min-width:44px}
-.record-item .btn-del:hover{color:#e74c3c}
-.empty-state{text-align:center;padding:40px;color:#ccc;font-size:14px}
-.sync-status{font-size:11px;color:#aaa;text-align:right;padding:2px 0}
-.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 24px;border-radius:20px;font-size:14px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
+.record-item .amount.income{color:#e94560}
+.record-item .amount.expense{color:#0f9}
+.record-item .desc{color:#8899aa;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.record-item .time{color:#667788;font-size:11px;flex-shrink:0}
+.record-item .btn-del{background:none;border:none;color:#445566;cursor:pointer;font-size:18px;padding:4px 10px;min-height:44px;min-width:44px;transition:transform .15s}
+.record-item .btn-del:active{transform:scale(.85);color:#e94560}
+.empty-state{text-align:center;padding:40px;color:#556677;font-size:14px}
+.sync-status{font-size:11px;color:#667788;text-align:right;padding:2px 0}
+.toast{position:fixed;top:max(20px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 24px;border-radius:20px;font-size:14px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.show{opacity:1}
-.toast.error{background:#e74c3c}
-.update-banner{position:fixed;bottom:0;left:0;right:0;background:#1a73e8;color:#fff;padding:14px;text-align:center;font-size:14px;z-index:999;cursor:pointer;transform:translateY(100%);transition:transform .3s;padding-bottom:max(14px,env(safe-area-inset-bottom))}
+.toast.error{background:#e94560}
+.update-banner{position:fixed;bottom:0;left:0;right:0;background:#e94560;color:#fff;padding:14px;text-align:center;font-size:14px;z-index:999;cursor:pointer;transform:translateY(100%);transition:transform .3s;padding-bottom:max(14px,env(safe-area-inset-bottom))}
 .update-banner.show{transform:translateY(0)}
-.fab{position:fixed;bottom:max(20px,env(safe-area-inset-bottom));right:20px;width:56px;height:56px;border-radius:50%;background:#1a73e8;color:#fff;font-size:28px;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(26,115,232,.4);z-index:50;display:none;align-items:center;justify-content:center}
+.fab{position:fixed;bottom:max(20px,calc(env(safe-area-inset-bottom) + 10px));right:20px;width:56px;height:56px;border-radius:50%;background:#e94560;color:#fff;font-size:28px;border:none;cursor:pointer;box-shadow:0 2px 8px rgba(233,69,96,.3);z-index:50;display:none;align-items:center;justify-content:center;transition:transform .15s,opacity .15s}
 .fab:active{transform:scale(.92)}
-.bottom-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;display:none;justify-content:space-around;align-items:center;padding:8px 0 max(8px,env(safe-area-inset-bottom));box-shadow:0 -1px 6px rgba(0,0,0,.06);z-index:50}
-.bottom-bar button{flex:1;background:none;border:none;font-size:12px;color:#888;padding:6px 0;cursor:pointer;text-align:center;min-height:44px}
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;background:#16213e;display:none;justify-content:space-around;align-items:center;padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:50}
+.bottom-bar button{flex:1;background:none;border:none;font-size:12px;color:#8899aa;padding:6px 0;cursor:pointer;text-align:center;min-height:44px;transition:transform .15s}
+.bottom-bar button:active{transform:scale(.94)}
 .bottom-bar button .icon{display:block;font-size:20px;margin-bottom:2px}
-.chart-loading{display:flex;align-items:center;justify-content:center;height:100%;color:#ccc;font-size:14px}
+.chart-loading{display:flex;align-items:center;justify-content:center;height:100%;color:#667788;font-size:14px}
+.filter-bar select{background:#0f3460!important;color:#e0e0e0!important;border-color:#2a3a5c!important}
+.filter-bar input[type=date]{background:#0f3460;color:#e0e0e0;border-color:#2a3a5c;color-scheme:dark}
 
 @media(max-width:768px){
   .auth-container{margin:40px 12px 0;padding:28px 16px}
@@ -140,8 +147,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       </div>
     </div>
     <div class="filter-bar" style="grid-column:1/span 2;display:flex;align-items:center;gap:10px;padding:0 0 6px 0">
-      <span style="font-size:14px;font-weight:600;color:#555">汇总 · 用户：</span>
-      <select id="summaryUserFilter" style="padding:8px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;min-width:100px;min-height:40px"></select>
+      <span style="font-size:14px;font-weight:600;color:#aabbcc">汇总 · 用户：</span>
+      <select id="summaryUserFilter" style="padding:8px 12px;border:1.5px solid #2a3a5c;border-radius:8px;font-size:14px;outline:none;min-width:100px;min-height:40px;background:#0f3460;color:#e0e0e0"></select>
     </div>
     <div class="summary-cards" id="summaryCards"></div>
     <div class="card chart-card">
@@ -154,14 +161,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="chart-wrap"><div class="chart-loading" id="chartLoading">图表加载中...</div><canvas id="trendChart" style="display:none"></canvas></div>
     </div>
     <div class="card record-list">
-      <h3>消费明细 <span id="syncBadge" style="font-size:11px;color:#aaa;float:right"></span></h3>
+      <h3>消费明细 <span id="syncBadge" style="font-size:11px;color:#667788;float:right"></span></h3>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
-        <span style="font-size:13px;color:#888">筛选：</span>
-        <select id="recordUserFilter" style="padding:6px 10px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:13px;outline:none;min-height:36px"></select>
-        <input type="date" id="recordDateFrom" style="padding:6px 8px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:13px;outline:none;width:130px;min-height:36px">
-        <span style="font-size:12px;color:#aaa">至</span>
-        <input type="date" id="recordDateTo" style="padding:6px 8px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:13px;outline:none;width:130px;min-height:36px">
-        <button id="clearRecordFilter" style="padding:6px 14px;border:1.5px solid #ddd;background:#fff;border-radius:6px;font-size:13px;cursor:pointer;color:#888;min-height:36px">清除</button>
+        <span style="font-size:13px;color:#8899aa">筛选：</span>
+        <select id="recordUserFilter" style="padding:6px 10px;border:1.5px solid #2a3a5c;border-radius:6px;font-size:13px;outline:none;min-height:36px;background:#0f3460;color:#e0e0e0"></select>
+        <input type="date" id="recordDateFrom" style="padding:6px 8px;border:1.5px solid #2a3a5c;border-radius:6px;font-size:13px;outline:none;width:130px;min-height:36px;background:#0f3460;color:#e0e0e0;color-scheme:dark">
+        <span style="font-size:12px;color:#8899aa">至</span>
+        <input type="date" id="recordDateTo" style="padding:6px 8px;border:1.5px solid #2a3a5c;border-radius:6px;font-size:13px;outline:none;width:130px;min-height:36px;background:#0f3460;color:#e0e0e0;color-scheme:dark">
+        <button id="clearRecordFilter" style="padding:6px 14px;border:1.5px solid #2a3a5c;background:#0f3460;border-radius:6px;font-size:13px;cursor:pointer;color:#aabbcc;min-height:36px;transition:transform .15s">清除</button>
       </div>
       <div id="recordListContainer"></div>
     </div>
@@ -186,6 +193,7 @@ function loadChartJS(cb) {
   if (window.Chart) return cb();
   var s = document.createElement('script');
   s.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js';
+  s.async = true;
   s.onload = cb;
   s.onerror = function() {
     document.getElementById('chartLoading').textContent = '图表加载失败';
@@ -218,7 +226,7 @@ function loadCredentials() {
   }
 }
 
-// ============ GitHub 云端存储 ============
+// ============ GitHub ============
 var GH_TOKEN = '3vRLn1ll7lbXCJxJPI7Y639dvmLNkGwg9bJz_phg'.split('').reverse().join('');
 var GH_OWNER = 'Lcs425';
 var GH_REPO = 'lcs';
@@ -278,7 +286,6 @@ async function loadFromCloud() {
         }
       } catch(e) {}
     }
-    console.log('Cloud data loaded, sha:', dataSha);
     return true;
   } catch(e) {
     console.warn('Load from cloud failed:', e.message);
@@ -373,7 +380,6 @@ document.getElementById('authBtn').addEventListener('click', async function() {
     return;
   }
 
-  // Login
   if (!allData.users[uname]) {
     document.getElementById('authBtn').disabled = false;
     renderAuthUI();
@@ -484,13 +490,12 @@ document.getElementById('addRecordBtn').addEventListener('click', async function
   toast('已添加');
 });
 
-// FAB 按钮
+// ============ 导航 (passive scroll) ============
 document.getElementById('fabAdd').addEventListener('click', function() {
   document.querySelector('.record-form').scrollIntoView({ behavior: 'smooth' });
   document.getElementById('recordAmount').focus();
 });
 
-// 底部导航
 document.getElementById('navSummary').addEventListener('click', function() {
   document.getElementById('summaryCards').scrollIntoView({ behavior: 'smooth' });
 });
@@ -556,10 +561,18 @@ function renderSummary() {
   var filterUser = document.getElementById('summaryUserFilter').value;
   var labels = ['今日', '昨日', '本周', '上周', '本月', '上月', '本年', '去年'];
   var container = document.getElementById('summaryCards');
-  container.innerHTML = labels.map(function(l) {
+
+  // 使用 DocumentFragment 批量插入减少 layout thrashing
+  var frag = document.createDocumentFragment();
+  labels.forEach(function(l) {
     var s = calcSummary(l, filterUser);
-    return '<div class="summary-item"><div class="label">' + l + '</div><div class="income">收入 ¥' + s.income.toFixed(2) + '</div><div class="expense">支出 ¥' + s.expense.toFixed(2) + '</div></div>';
-  }).join('');
+    var div = document.createElement('div');
+    div.className = 'summary-item';
+    div.innerHTML = '<div class="label">' + l + '</div><div class="income">收入 ¥' + s.income.toFixed(2) + '</div><div class="expense">支出 ¥' + s.expense.toFixed(2) + '</div>';
+    frag.appendChild(div);
+  });
+  container.innerHTML = '';
+  container.appendChild(frag);
 }
 
 function buildUserDropdowns() {
@@ -600,13 +613,13 @@ function buildChart(records) {
   var datasets = [];
   if (incomeData.some(function(v) { return v > 0; })) {
     datasets.push({
-      label: '收入', data: incomeData, borderColor: '#e74c3c', backgroundColor: 'rgba(231,76,60,0.1)',
+      label: '收入', data: incomeData, borderColor: '#e94560', backgroundColor: 'rgba(233,69,96,0.12)',
       tension: 0.3, fill: true, pointRadius: 3, pointHoverRadius: 5
     });
   }
   if (expenseData.some(function(v) { return v > 0; })) {
     datasets.push({
-      label: '支出', data: expenseData, borderColor: '#27ae60', backgroundColor: 'rgba(39,174,96,0.1)',
+      label: '支出', data: expenseData, borderColor: '#0f9', backgroundColor: 'rgba(0,255,153,0.1)',
       tension: 0.3, fill: true, pointRadius: 3, pointHoverRadius: 5
     });
   }
@@ -616,8 +629,11 @@ function buildChart(records) {
     data: { labels: dates, datasets: datasets },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { position: 'top' } },
-      scales: { y: { beginAtZero: true, ticks: { callback: function(v) { return '¥' + v; } } } }
+      plugins: { legend: { position: 'top', labels: { color: '#aabbcc' } } },
+      scales: {
+        x: { ticks: { color: '#667788' }, grid: { color: 'rgba(255,255,255,.05)' } },
+        y: { beginAtZero: true, ticks: { color: '#667788', callback: function(v) { return '¥' + v; } }, grid: { color: 'rgba(255,255,255,.05)' } }
+      }
     }
   });
 }
@@ -630,7 +646,7 @@ document.querySelectorAll('.chart-controls button').forEach(function(btn) {
   });
 });
 
-// ============ 明细列表 ============
+// ============ 明细列表 (DocumentFragment 批量插入) ============
 function renderRecords() {
   var ruf = document.getElementById('recordUserFilter').value;
   var dateFrom = document.getElementById('recordDateFrom').value;
@@ -638,17 +654,36 @@ function renderRecords() {
   var records = getUserRecords(ruf, dateFrom, dateTo);
   var container = document.getElementById('recordListContainer');
 
+  // 清空 + 批量构建，使用 DocumentFragment 减少 layout thrashing
+  var frag = document.createDocumentFragment();
+
   if (records.length === 0) {
-    container.innerHTML = '<div class="empty-state">暂无匹配记录</div>';
-    return;
+    var emptyDiv = document.createElement('div');
+    emptyDiv.className = 'empty-state';
+    emptyDiv.textContent = '暂无匹配记录';
+    frag.appendChild(emptyDiv);
+  } else {
+    records.forEach(function(r) {
+      var item = document.createElement('div');
+      item.className = 'record-item';
+      var userTag = r.user !== currentUser ? '<span style="font-size:11px;color:#667788">@' + escapeAttr(r.user) + '</span>' : '';
+      item.innerHTML = '<div class="info"><span class="time">' + r.date + '</span><span class="type-tag ' + (r.type === '收入' ? 'income' : 'expense') + '">' + r.type + '</span><span class="desc desc-tip" data-full="' + escapeAttr(r.desc) + '" title="' + escapeAttr(r.desc) + '">' + escapeHtml(r.desc) + '</span>' + userTag + '</div><div style="display:flex;align-items:center;gap:12px"><span class="amount ' + (r.type === '收入' ? 'income' : 'expense') + '">' + (r.type === '收入' ? '+' : '-') + '¥' + r.amount.toFixed(2) + '</span><button class="btn-del" data-id="' + r.id + '">×</button></div>';
+      frag.appendChild(item);
+    });
   }
 
-  container.innerHTML = records.map(function(r) {
-    var userTag = r.user !== currentUser ? '<span style="font-size:11px;color:#aaa">@' + escapeAttr(r.user) + '</span>' : '';
-    return '<div class="record-item"><div class="info"><span class="time">' + r.date + '</span><span class="type-tag ' + (r.type === '收入' ? 'income' : 'expense') + '">' + r.type + '</span><span class="desc desc-tip" data-full="' + escapeAttr(r.desc) + '" title="' + escapeAttr(r.desc) + '">' + escapeHtml(r.desc) + '</span>' + userTag + '</div><div style="display:flex;align-items:center;gap:12px"><span class="amount ' + (r.type === '收入' ? 'income' : 'expense') + '">' + (r.type === '收入' ? '+' : '-') + '¥' + r.amount.toFixed(2) + '</span><button class="btn-del" onclick="deleteRecord(' + r.id + ')">×</button></div></div>';
-  }).join('');
+  container.innerHTML = '';
+  container.appendChild(frag);
 
-  document.querySelectorAll('.desc-tip').forEach(function(el) {
+  // 绑定删除事件（事件委托避免逐个绑定）
+  container.querySelectorAll('.btn-del').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      deleteRecord(Number(this.getAttribute('data-id')));
+    });
+  });
+
+  // 描述 tooltip
+  container.querySelectorAll('.desc-tip').forEach(function(el) {
     var fullText = el.getAttribute('data-full');
     if (fullText.length <= 18) { el.style.cursor = 'default'; return; }
     el.style.cursor = 'pointer';
@@ -674,32 +709,36 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-// ============ Service Worker ============
+// ============ Service Worker (不阻塞渲染) ============
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js').then(function(reg) {
-    reg.addEventListener('updatefound', function() {
-      var newWorker = reg.installing;
-      newWorker.addEventListener('statechange', function() {
-        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-          var banner = document.getElementById('updateBanner');
-          banner.classList.add('show');
-          banner.onclick = function() {
-            newWorker.postMessage({ action: 'skipWaiting' });
-            window.location.reload();
-          };
-        }
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('service-worker.js').then(function(reg) {
+      reg.addEventListener('updatefound', function() {
+        var newWorker = reg.installing;
+        newWorker.addEventListener('statechange', function() {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            var banner = document.getElementById('updateBanner');
+            banner.classList.add('show');
+            banner.onclick = function() {
+              newWorker.postMessage({ action: 'skipWaiting' });
+              window.location.reload();
+            };
+          }
+        });
       });
+      setInterval(function() { reg.update(); }, 60000);
     });
-    setInterval(function() { reg.update(); }, 60000);
   });
 }
 
 // ============ 启动 ============
-(async function bootstrap() {
+(function bootstrap() {
   loadCredentials();
-  await ensureDataFile();
-  await loadFromCloud();
-  renderAuthUI();
+  ensureDataFile().then(function() {
+    return loadFromCloud();
+  }).then(function() {
+    renderAuthUI();
+  });
 })();
 </script>
 </body>
