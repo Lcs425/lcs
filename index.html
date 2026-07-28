@@ -182,12 +182,23 @@ async function loadFromCloud() {
     const decoded = atob(result.content);
     allData = JSON.parse(decodeURIComponent(escape(decoded)));
     document.getElementById('syncStatus').textContent = '数据已同步';
+
+    // 云端为空时，自动迁移 localStorage 的旧数据
+    if (!Object.keys(allData.users).length && !allData.records.length) {
+      try {
+        const local = JSON.parse(localStorage.getItem('jzb_local'));
+        if (local && (Object.keys(local.users || {}).length || (local.records || []).length)) {
+          allData = local;
+          await saveToCloud();
+          toast('本地数据已上传云端');
+        }
+      } catch (e) {}
+    }
     console.log('Cloud data loaded, sha:', dataSha);
     return true;
   } catch (e) {
     console.warn('Load from cloud failed:', e.message);
     document.getElementById('syncStatus').textContent = '离线模式（数据仅本地）';
-    // Fallback to localStorage
     try {
       allData = JSON.parse(localStorage.getItem('jzb_local')) || { users: {}, records: [] };
     } catch { allData = { users: {}, records: [] }; }
