@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="记账本">
+<meta name="apple-mobile-web-app-title" content="璁拌处鏈?>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#ffffff">
-<title>记账本</title>
+<title>璁拌处鏈?/title>
 <!-- version: v7 -->
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
-html{width:100%;max-width:100vw;margin:0;padding:0;background:#f5f5f5;display:flex;flex-direction:column;min-height:100vh;min-height:100dvh}
-body{width:100%;max-width:100vw;margin:0;padding:0;overflow-x:hidden;background:#f5f5f5;display:flex;flex-direction:column;flex:1;min-height:100vh;min-height:100dvh}
+html{width:100%;max-width:100vw;margin:0;padding:0;background:#fff;display:flex;flex-direction:column;min-height:100vh;min-height:100dvh}
+body{width:100%;max-width:100vw;margin:0;padding:0;overflow-x:hidden;background:#fff;display:flex;flex-direction:column;flex:1;min-height:100vh;min-height:100dvh}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#333;min-height:100vh;min-height:100dvh;font-size:16px;-webkit-tap-highlight-color:transparent}
 /* ===== Auth ===== */
@@ -35,7 +35,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#3
 .auth-toggle a{color:#4a90d9;cursor:pointer;text-decoration:none;font-weight:600}
 .hidden{display:none!important}
 /* ===== App ===== */
-#appSection{display:flex;flex-direction:column;min-height:100vh;min-height:100dvh}
+#appSection{background:#f5f5f5;display:flex;flex-direction:column;min-height:100vh;min-height:100dvh}
 .app-header{background:#fff;border-bottom:1px solid #e8e8e8;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;padding-top:max(12px,env(safe-area-inset-top))}
 .app-header h2{font-size:18px;color:#4a90d9}
 .app-header .user-info{display:flex;align-items:center;gap:10px}
@@ -117,14 +117,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#3
   .summary-item .income,.summary-item .expense{font-size:15px}
 }
 
-/* === 禁止左右滑动 === */
+/* === 绂佹宸﹀彸婊戝姩 === */
 html,body{overflow-x:hidden;max-width:100vw}
 .main-content,.auth-wrap,.app-header,.card,.record-list,.summary-cards,.chart-card{max-width:100%;overflow-x:hidden}
 .record-item,.form-row,.chart-controls{max-width:100%;overflow-x:hidden}
 input,select,button{max-width:100%}
 .summary-cards{overflow-x:hidden}
 
-/* === 消费明细筛选区（垂直布局） === */
+/* === 娑堣垂鏄庣粏绛涢€夊尯锛堝瀭鐩村竷灞€锛?=== */
 .record-filter-row{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;max-width:100%}
 .record-filter-row .rf-row{display:flex;align-items:center;gap:8px}
 .record-filter-row .rf-label{font-size:13px;color:#666;white-space:nowrap;flex-shrink:0;min-width:70px;text-align:right}
@@ -144,67 +144,67 @@ input,select,button{max-width:100%}
 
 <div id="authSection" class="auth-wrap">
 <div class="auth-container">
-  <h1>记账本</h1>
-  <p class="subtitle" id="authSubtitle">登录你的账户</p>
-  <div class="form-group"><label>用户名</label><input id="username" placeholder="请输入用户名" autocomplete="username"></div>
-  <div class="form-group"><label>密码</label><input id="password" type="password" placeholder="请输入密码" autocomplete="current-password"></div>
-  <div class="remember-row"><input type="checkbox" id="rememberPwd"><label for="rememberPwd">记住密码</label></div>
-  <button class="btn btn-primary" id="authBtn">登 录</button>
-  <p class="auth-toggle" id="authToggle">还没有账户？<a id="toggleLink" href="javascript:void(0)">立即注册</a></p>
+  <h1>璁拌处鏈?/h1>
+  <p class="subtitle" id="authSubtitle">鐧诲綍浣犵殑璐︽埛</p>
+  <div class="form-group"><label>鐢ㄦ埛鍚?/label><input id="username" placeholder="璇疯緭鍏ョ敤鎴峰悕" autocomplete="username"></div>
+  <div class="form-group"><label>瀵嗙爜</label><input id="password" type="password" placeholder="璇疯緭鍏ュ瘑鐮? autocomplete="current-password"></div>
+  <div class="remember-row"><input type="checkbox" id="rememberPwd"><label for="rememberPwd">璁颁綇瀵嗙爜</label></div>
+  <button class="btn btn-primary" id="authBtn">鐧?褰?/button>
+  <p class="auth-toggle" id="authToggle">杩樻病鏈夎处鎴凤紵<a id="toggleLink" href="javascript:void(0)">绔嬪嵆娉ㄥ唽</a></p>
   <p class="sync-status" id="syncStatus"></p>
 </div>
 </div>
 
 <div id="appSection" class="hidden">
   <div class="app-header">
-    <h2>记账本</h2>
+    <h2>璁拌处鏈?/h2>
     <div class="user-info">
       <span id="currentUser"></span>
-      <button class="btn-logout" id="logoutBtn">退出</button>
+      <button class="btn-logout" id="logoutBtn">閫€鍑?/button>
     </div>
   </div>
   <div class="main-content">
     <div class="card record-form">
-      <h3>记一笔</h3>
+      <h3>璁颁竴绗?/h3>
       <div class="form-row">
-        <div class="field"><label>日期</label><input type="date" id="recordDate"></div>
-        <div class="field"><label>类型</label><select id="recordType"><option value="支出" selected>支出</option><option value="收入">收入</option></select></div>
-        <div class="field"><label>金额</label><input type="number" id="recordAmount" placeholder="0.00" step="0.01" min="0.01" inputmode="decimal"></div>
-        <div class="field" style="flex:2"><label>描述</label><input id="recordDesc" placeholder="买咖啡 / 工资..." inputmode="text"></div>
-        <button class="btn-add" id="addRecordBtn">+ 添加</button>
+        <div class="field"><label>鏃ユ湡</label><input type="date" id="recordDate"></div>
+        <div class="field"><label>绫诲瀷</label><select id="recordType"><option value="鏀嚭" selected>鏀嚭</option><option value="鏀跺叆">鏀跺叆</option></select></div>
+        <div class="field"><label>閲戦</label><input type="number" id="recordAmount" placeholder="0.00" step="0.01" min="0.01" inputmode="decimal"></div>
+        <div class="field" style="flex:2"><label>鎻忚堪</label><input id="recordDesc" placeholder="涔板挅鍟?/ 宸ヨ祫..." inputmode="text"></div>
+        <button class="btn-add" id="addRecordBtn">+ 娣诲姞</button>
       </div>
     </div>
     <div class="filter-bar" style="grid-column:1/span 2;display:flex;align-items:center;gap:10px;padding:0 0 6px 0">
-      <span style="font-size:14px;font-weight:600;color:#666">汇总 · 用户：</span>
+      <span style="font-size:14px;font-weight:600;color:#666">姹囨€?路 鐢ㄦ埛锛?/span>
       <select id="summaryUserFilter" style="padding:8px 12px;border:1px solid #d9d9d9;border-radius:6px;font-size:14px;outline:none;min-width:100px;min-height:40px;background:#fff;color:#333"></select>
     </div>
     <div class="summary-cards" id="summaryCards"></div>
     <div class="card chart-card" style="max-width:100%;overflow:hidden">
-      <h3>趋势分析</h3>
+      <h3>瓒嬪娍鍒嗘瀽</h3>
       <div class="chart-controls">
-        <button data-type="all" class="active">全部</button>
-        <button data-type="收入">收入</button>
-        <button data-type="支出">支出</button>
+        <button data-type="all" class="active">鍏ㄩ儴</button>
+        <button data-type="鏀跺叆">鏀跺叆</button>
+        <button data-type="鏀嚭">鏀嚭</button>
       </div>
-      <div class="chart-wrap"><div class="chart-loading" id="chartLoading">图表加载中...</div><canvas id="trendChart" style="display:none"></canvas></div>
+      <div class="chart-wrap"><div class="chart-loading" id="chartLoading">鍥捐〃鍔犺浇涓?..</div><canvas id="trendChart" style="display:none"></canvas></div>
     </div>
     <div class="card record-list">
-      <h3>消费明细 <span id="syncBadge" style="font-size:11px;color:#999;float:right"></span></h3>
+      <h3>娑堣垂鏄庣粏 <span id="syncBadge" style="font-size:11px;color:#999;float:right"></span></h3>
       <div class="record-filter-row">
         <div class="rf-row rf-user-row">
-          <span class="rf-label">筛选用户：</span>
+          <span class="rf-label">绛涢€夌敤鎴凤細</span>
           <select id="recordUserFilter" class="rf-select"></select>
         </div>
         <div class="rf-row rf-date-row">
-          <span class="rf-label">开始：</span>
+          <span class="rf-label">寮€濮嬶細</span>
           <input type="date" id="recordDateFrom" class="rf-date">
         </div>
         <div class="rf-row rf-date-row">
-          <span class="rf-label">结束：</span>
+          <span class="rf-label">缁撴潫锛?/span>
           <input type="date" id="recordDateTo" class="rf-date">
         </div>
         <div class="rf-row rf-action-row">
-          <button id="clearRecordFilter" class="rf-clear">清除筛选</button>
+          <button id="clearRecordFilter" class="rf-clear">娓呴櫎绛涢€?/button>
         </div>
       </div>
       <div id="recordListContainer"></div>
@@ -213,20 +213,20 @@ input,select,button{max-width:100%}
 </div>
 
   <div class="bottom-bar" id="bottomBar">
-    <button id="navAdd"><span class="icon">✏️</span>记一笔</button>
-    <button id="navSummary"><span class="icon">📊</span>汇总</button>
-    <button id="navChart"><span class="icon">📈</span>趋势</button>
-    <button id="navRecords"><span class="icon">📋</span>明细</button>
+    <button id="navAdd"><span class="icon">鉁忥笍</span>璁颁竴绗?/button>
+    <button id="navSummary"><span class="icon">馃搳</span>姹囨€?/button>
+    <button id="navChart"><span class="icon">馃搱</span>瓒嬪娍</button>
+    <button id="navRecords"><span class="icon">馃搵</span>鏄庣粏</button>
   </div>
 
 
 <div id="toast" class="toast"></div>
 <div id="descTooltip" style="display:none;position:fixed;background:#333;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;max-width:280px;z-index:10000;pointer-events:none;white-space:normal;word-break:break-all;line-height:1.5"></div>
-<div id="updateBanner" class="update-banner">新版本可用，点击更新</div>
+<div id="updateBanner" class="update-banner">鏂扮増鏈彲鐢紝鐐瑰嚮鏇存柊</div>
 
 
 <script>
-// ============ Chart.js 延迟加载 ============
+// ============ Chart.js 寤惰繜鍔犺浇 ============
 function loadChartJS(cb) {
   if (window.Chart) return cb();
   var s = document.createElement('script');
@@ -234,7 +234,7 @@ function loadChartJS(cb) {
   s.async = true;
   s.onload = cb;
   s.onerror = function() {
-    document.getElementById('chartLoading').textContent = '图表加载失败';
+    document.getElementById('chartLoading').textContent = '鍥捐〃鍔犺浇澶辫触';
   };
   document.head.appendChild(s);
 }
@@ -312,7 +312,7 @@ async function loadFromCloud() {
     dataSha = result.sha;
     var decoded = atob(result.content);
     allData = JSON.parse(decodeURIComponent(escape(decoded)));
-    document.getElementById('syncStatus').textContent = '数据已同步';
+    document.getElementById('syncStatus').textContent = '鏁版嵁宸插悓姝?;
 
     if (!Object.keys(allData.users).length && !allData.records.length) {
       try {
@@ -320,14 +320,14 @@ async function loadFromCloud() {
         if (local && (Object.keys(local.users || {}).length || (local.records || []).length)) {
           allData = local;
           await saveToCloud();
-          toast('本地数据已上传云端');
+          toast('鏈湴鏁版嵁宸蹭笂浼犱簯绔?);
         }
       } catch(e) {}
     }
     return true;
   } catch(e) {
     console.warn('Load from cloud failed:', e.message);
-    document.getElementById('syncStatus').textContent = '离线模式（数据仅本地）';
+    document.getElementById('syncStatus').textContent = '绂荤嚎妯″紡锛堟暟鎹粎鏈湴锛?;
     try {
       allData = JSON.parse(localStorage.getItem('jzb_local')) || { users: {}, records: [] };
     } catch(e2) { allData = { users: {}, records: [] }; }
@@ -344,14 +344,14 @@ async function saveToCloud(retryCount) {
 
     var result = await api('PUT', body);
     dataSha = result.content.sha;
-    document.getElementById('syncBadge').textContent = '已同步';
+    document.getElementById('syncBadge').textContent = '宸插悓姝?;
     return true;
   } catch(e) {
     if (e.message.indexOf('409') !== -1 && retryCount < 3) {
       await loadFromCloud();
       return saveToCloud(retryCount + 1);
     }
-    document.getElementById('syncBadge').textContent = '离线';
+    document.getElementById('syncBadge').textContent = '绂荤嚎';
     localStorage.setItem('jzb_local', JSON.stringify(allData));
     return false;
   }
@@ -377,15 +377,15 @@ async function ensureDataFile() {
   }
 }
 
-// ============ 认证 ============
+// ============ 璁よ瘉 ============
 var authMode = 'login';
 
 function renderAuthUI() {
-  document.getElementById('authBtn').textContent = authMode === 'login' ? '登 录' : '注 册';
-  document.getElementById('authSubtitle').textContent = authMode === 'login' ? '登录你的账户' : '创建新账户';
+  document.getElementById('authBtn').textContent = authMode === 'login' ? '鐧?褰? : '娉?鍐?;
+  document.getElementById('authSubtitle').textContent = authMode === 'login' ? '鐧诲綍浣犵殑璐︽埛' : '鍒涘缓鏂拌处鎴?;
   document.getElementById('authToggle').innerHTML = authMode === 'login'
-    ? '还没有账户？<a id="toggleLink" href="javascript:void(0)">立即注册</a>'
-    : '已有账户？<a id="toggleLink" href="javascript:void(0)">去登录</a>';
+    ? '杩樻病鏈夎处鎴凤紵<a id="toggleLink" href="javascript:void(0)">绔嬪嵆娉ㄥ唽</a>'
+    : '宸叉湁璐︽埛锛?a id="toggleLink" href="javascript:void(0)">鍘荤櫥褰?/a>';
   document.getElementById('toggleLink').onclick = function() {
     authMode = authMode === 'login' ? 'register' : 'login';
     renderAuthUI();
@@ -395,22 +395,22 @@ function renderAuthUI() {
 document.getElementById('authBtn').addEventListener('click', async function() {
   var uname = document.getElementById('username').value.trim();
   var pwd = document.getElementById('password').value.trim();
-  if (!uname || !pwd) return toast('请输入用户名和密码', true);
+  if (!uname || !pwd) return toast('璇疯緭鍏ョ敤鎴峰悕鍜屽瘑鐮?, true);
 
   document.getElementById('authBtn').disabled = true;
-  document.getElementById('authBtn').textContent = '处理中...';
+  document.getElementById('authBtn').textContent = '澶勭悊涓?..';
 
   if (authMode === 'register') {
     if (allData.users[uname]) {
       document.getElementById('authBtn').disabled = false;
       renderAuthUI();
-      return toast('用户名已存在', true);
+      return toast('鐢ㄦ埛鍚嶅凡瀛樺湪', true);
     }
     allData.users[uname] = { password: pwd, createdAt: new Date().toISOString() };
     await saveToCloud();
     document.getElementById('authBtn').disabled = false;
     saveCredentials(uname, pwd);
-    toast('注册成功，已自动记住密码');
+    toast('娉ㄥ唽鎴愬姛锛屽凡鑷姩璁颁綇瀵嗙爜');
     authMode = 'login';
     renderAuthUI();
     document.getElementById('username').value = '';
@@ -421,19 +421,19 @@ document.getElementById('authBtn').addEventListener('click', async function() {
   if (!allData.users[uname]) {
     document.getElementById('authBtn').disabled = false;
     renderAuthUI();
-    return toast('用户不存在', true);
+    return toast('鐢ㄦ埛涓嶅瓨鍦?, true);
   }
   if (allData.users[uname].password !== pwd) {
     document.getElementById('authBtn').disabled = false;
     renderAuthUI();
-    return toast('密码错误', true);
+    return toast('瀵嗙爜閿欒', true);
   }
 
   saveCredentials(uname, pwd);
   currentUser = uname;
   document.getElementById('authSection').classList.add('hidden');
   document.getElementById('appSection').classList.remove('hidden');
-  document.getElementById('currentUser').textContent = '用户：' + currentUser;
+  document.getElementById('currentUser').textContent = '鐢ㄦ埛锛? + currentUser;
   document.getElementById('authBtn').disabled = false;
   renderAuthUI();
   initApp();
@@ -448,14 +448,14 @@ document.getElementById('logoutBtn').addEventListener('click', function() {
   renderAuthUI();
 });
 
-// ============ 应用初始化 ============
+// ============ 搴旂敤鍒濆鍖?============
 var trendChart = null;
 
 async function initApp() {
   document.getElementById('recordDate').value = new Date().toISOString().split('T')[0];
   document.getElementById('recordAmount').value = '';
   document.getElementById('recordDesc').value = '';
-  document.getElementById('recordType').value = '支出';
+  document.getElementById('recordType').value = '鏀嚭';
 
   await loadFromCloud();
   buildUserDropdowns();
@@ -498,15 +498,15 @@ function getUserRecords(filterUser, dateFrom, dateTo) {
   return records.sort(function(a, b) { return b.date.localeCompare(a.date) || b.id - a.id; });
 }
 
-// ============ 添加记录 ============
+// ============ 娣诲姞璁板綍 ============
 document.getElementById('addRecordBtn').addEventListener('click', async function() {
   var date = document.getElementById('recordDate').value;
   var type = document.getElementById('recordType').value;
   var amount = parseFloat(document.getElementById('recordAmount').value);
   var desc = document.getElementById('recordDesc').value.trim();
 
-  if (!date || !amount || amount <= 0) return toast('请填写完整的日期和金额', true);
-  if (!desc) return toast('请输入消费描述', true);
+  if (!date || !amount || amount <= 0) return toast('璇峰～鍐欏畬鏁寸殑鏃ユ湡鍜岄噾棰?, true);
+  if (!desc) return toast('璇疯緭鍏ユ秷璐规弿杩?, true);
 
   allData.records.push({
     id: Date.now(),
@@ -519,16 +519,16 @@ document.getElementById('addRecordBtn').addEventListener('click', async function
 
   document.getElementById('recordAmount').value = '';
   document.getElementById('recordDesc').value = '';
-  document.getElementById('recordType').value = '支出';
+  document.getElementById('recordType').value = '鏀嚭';
 
   await saveToCloud();
   renderSummary();
   renderChart(document.querySelector('.chart-controls button.active').dataset.type);
   renderRecords();
-  toast('已添加');
+  toast('宸叉坊鍔?);
 });
 
-// ============ 导航 ============
+// ============ 瀵艰埅 ============
 document.getElementById('navAdd').addEventListener('click', function() {
   document.querySelector('.record-form').scrollIntoView({ behavior: 'smooth' });
   document.getElementById('recordAmount').focus();
@@ -544,18 +544,18 @@ document.getElementById('navRecords').addEventListener('click', function() {
   document.querySelector('.record-list').scrollIntoView({ behavior: 'smooth' });
 });
 
-// ============ 删除记录 ============
+// ============ 鍒犻櫎璁板綍 ============
 async function deleteRecord(id) {
-  if (!confirm('确定删除这条记录吗？')) return;
+  if (!confirm('纭畾鍒犻櫎杩欐潯璁板綍鍚楋紵')) return;
   allData.records = allData.records.filter(function(r) { return r.id !== id; });
   await saveToCloud();
   renderSummary();
   renderChart(document.querySelector('.chart-controls button.active').dataset.type);
   renderRecords();
-  toast('已删除');
+  toast('宸插垹闄?);
 }
 
-// ============ 汇总计算 ============
+// ============ 姹囨€昏绠?============
 function getDateRange(label) {
   var now = new Date();
   var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -563,20 +563,20 @@ function getDateRange(label) {
   var day = 86400000;
 
   switch(label) {
-    case '今日': return { start: s(today), end: s(new Date(today.getTime() + day - 1)) };
-    case '昨日': return { start: s(new Date(today - day)), end: s(new Date(today - 1)) };
-    case '本周':
+    case '浠婃棩': return { start: s(today), end: s(new Date(today.getTime() + day - 1)) };
+    case '鏄ㄦ棩': return { start: s(new Date(today - day)), end: s(new Date(today - 1)) };
+    case '鏈懆':
       var d = today.getDay();
       var monday = new Date(today - (d === 0 ? 6 : d - 1) * day);
       return { start: s(monday), end: s(new Date(monday.getTime() + 6 * day)) };
-    case '上周':
+    case '涓婂懆':
       var d2 = today.getDay();
       var lastMonday = new Date(today - ((d2 === 0 ? 6 : d2 - 1) + 7) * day);
       return { start: s(lastMonday), end: s(new Date(lastMonday.getTime() + 6 * day)) };
-    case '本月': return { start: s(new Date(now.getFullYear(), now.getMonth(), 1)), end: s(new Date(now.getFullYear(), now.getMonth() + 1, 0)) };
-    case '上月': return { start: s(new Date(now.getFullYear(), now.getMonth() - 1, 1)), end: s(new Date(now.getFullYear(), now.getMonth(), 0)) };
-    case '本年': return { start: s(new Date(now.getFullYear(), 0, 1)), end: s(new Date(now.getFullYear(), 11, 31)) };
-    case '去年': return { start: s(new Date(now.getFullYear() - 1, 0, 1)), end: s(new Date(now.getFullYear() - 1, 11, 31)) };
+    case '鏈湀': return { start: s(new Date(now.getFullYear(), now.getMonth(), 1)), end: s(new Date(now.getFullYear(), now.getMonth() + 1, 0)) };
+    case '涓婃湀': return { start: s(new Date(now.getFullYear(), now.getMonth() - 1, 1)), end: s(new Date(now.getFullYear(), now.getMonth(), 0)) };
+    case '鏈勾': return { start: s(new Date(now.getFullYear(), 0, 1)), end: s(new Date(now.getFullYear(), 11, 31)) };
+    case '鍘诲勾': return { start: s(new Date(now.getFullYear() - 1, 0, 1)), end: s(new Date(now.getFullYear() - 1, 11, 31)) };
     default: return { start: s(today), end: s(today) };
   }
 }
@@ -590,23 +590,23 @@ function calcSummary(label, filterUser) {
     records = records.filter(function(r) { return r.user === filterUser; });
   }
   return {
-    income: records.filter(function(r) { return r.type === '收入'; }).reduce(function(s, r) { return s + r.amount; }, 0),
-    expense: records.filter(function(r) { return r.type === '支出'; }).reduce(function(s, r) { return s + r.amount; }, 0)
+    income: records.filter(function(r) { return r.type === '鏀跺叆'; }).reduce(function(s, r) { return s + r.amount; }, 0),
+    expense: records.filter(function(r) { return r.type === '鏀嚭'; }).reduce(function(s, r) { return s + r.amount; }, 0)
   };
 }
 
 function renderSummary() {
   var filterUser = document.getElementById('summaryUserFilter').value;
-  var labels = ['今日', '昨日', '本周', '上周', '本月', '上月', '本年', '去年'];
+  var labels = ['浠婃棩', '鏄ㄦ棩', '鏈懆', '涓婂懆', '鏈湀', '涓婃湀', '鏈勾', '鍘诲勾'];
   var container = document.getElementById('summaryCards');
 
-  // 使用 DocumentFragment 批量插入减少 layout thrashing
+  // 浣跨敤 DocumentFragment 鎵归噺鎻掑叆鍑忓皯 layout thrashing
   var frag = document.createDocumentFragment();
   labels.forEach(function(l) {
     var s = calcSummary(l, filterUser);
     var div = document.createElement('div');
     div.className = 'summary-item';
-    div.innerHTML = '<div class="label">' + l + '</div><div class="income">收入 ¥' + s.income.toFixed(2) + '</div><div class="expense">支出 ¥' + s.expense.toFixed(2) + '</div>';
+    div.innerHTML = '<div class="label">' + l + '</div><div class="income">鏀跺叆 楼' + s.income.toFixed(2) + '</div><div class="expense">鏀嚭 楼' + s.expense.toFixed(2) + '</div>';
     frag.appendChild(div);
   });
   container.innerHTML = '';
@@ -615,12 +615,12 @@ function renderSummary() {
 
 function buildUserDropdowns() {
   var users = Object.keys(allData.users || {});
-  var opts = '<option value="all">全部用户</option>' + users.map(function(u) { return '<option value="' + u + '">' + u + '</option>'; }).join('');
+  var opts = '<option value="all">鍏ㄩ儴鐢ㄦ埛</option>' + users.map(function(u) { return '<option value="' + u + '">' + u + '</option>'; }).join('');
   document.getElementById('summaryUserFilter').innerHTML = opts;
   document.getElementById('recordUserFilter').innerHTML = opts;
 }
 
-// ============ 图表 ============
+// ============ 鍥捐〃 ============
 function renderChart(filterType) {
   var records = allData.records || [];
   var filtered = filterType === 'all' ? records : records.filter(function(r) { return r.type === filterType; });
@@ -634,7 +634,7 @@ function buildChart(records) {
   var dailyMap = {};
   records.forEach(function(r) {
     if (!dailyMap[r.date]) dailyMap[r.date] = { income: 0, expense: 0 };
-    dailyMap[r.date][r.type === '收入' ? 'income' : 'expense'] += r.amount;
+    dailyMap[r.date][r.type === '鏀跺叆' ? 'income' : 'expense'] += r.amount;
   });
 
   var dates = Object.keys(dailyMap).sort();
@@ -651,13 +651,13 @@ function buildChart(records) {
   var datasets = [];
   if (incomeData.some(function(v) { return v > 0; })) {
     datasets.push({
-      label: '收入', data: incomeData, borderColor: '#4a90d9', backgroundColor: 'rgba(74,144,217,0.12)',
+      label: '鏀跺叆', data: incomeData, borderColor: '#4a90d9', backgroundColor: 'rgba(74,144,217,0.12)',
       tension: 0.3, fill: true, pointRadius: 3, pointHoverRadius: 5
     });
   }
   if (expenseData.some(function(v) { return v > 0; })) {
     datasets.push({
-      label: '支出', data: expenseData, borderColor: '#52c41a', backgroundColor: 'rgba(82,196,26,0.1)',
+      label: '鏀嚭', data: expenseData, borderColor: '#52c41a', backgroundColor: 'rgba(82,196,26,0.1)',
       tension: 0.3, fill: true, pointRadius: 3, pointHoverRadius: 5
     });
   }
@@ -670,7 +670,7 @@ function buildChart(records) {
       plugins: { legend: { position: 'top', labels: { color: '#666' } } },
       scales: {
         x: { ticks: { color: '#999' }, grid: { color: 'rgba(0,0,0,.06)' } },
-        y: { beginAtZero: true, ticks: { color: '#999', callback: function(v) { return '¥' + v; } }, grid: { color: 'rgba(0,0,0,.06)' } }
+        y: { beginAtZero: true, ticks: { color: '#999', callback: function(v) { return '楼' + v; } }, grid: { color: 'rgba(0,0,0,.06)' } }
       }
     }
   });
@@ -684,7 +684,7 @@ document.querySelectorAll('.chart-controls button').forEach(function(btn) {
   });
 });
 
-// ============ 明细列表 (DocumentFragment 批量插入) ============
+// ============ 鏄庣粏鍒楄〃 (DocumentFragment 鎵归噺鎻掑叆) ============
 function renderRecords() {
   var ruf = document.getElementById('recordUserFilter').value;
   var dateFrom = document.getElementById('recordDateFrom').value;
@@ -692,20 +692,20 @@ function renderRecords() {
   var records = getUserRecords(ruf, dateFrom, dateTo);
   var container = document.getElementById('recordListContainer');
 
-  // 清空 + 批量构建，使用 DocumentFragment 减少 layout thrashing
+  // 娓呯┖ + 鎵归噺鏋勫缓锛屼娇鐢?DocumentFragment 鍑忓皯 layout thrashing
   var frag = document.createDocumentFragment();
 
   if (records.length === 0) {
     var emptyDiv = document.createElement('div');
     emptyDiv.className = 'empty-state';
-    emptyDiv.textContent = '暂无匹配记录';
+    emptyDiv.textContent = '鏆傛棤鍖归厤璁板綍';
     frag.appendChild(emptyDiv);
   } else {
     records.forEach(function(r) {
       var item = document.createElement('div');
       item.className = 'record-item';
       var userTag = r.user !== currentUser ? '<span style="font-size:11px;color:#999">@' + escapeAttr(r.user) + '</span>' : '';
-      item.innerHTML = '<div class="info"><span class="time">' + r.date + '</span><span class="type-tag ' + (r.type === '收入' ? 'income' : 'expense') + '">' + r.type + '</span><span class="desc desc-tip" data-full="' + escapeAttr(r.desc) + '" title="' + escapeAttr(r.desc) + '">' + escapeHtml(r.desc) + '</span>' + userTag + '</div><div style="display:flex;align-items:center;gap:12px"><span class="amount ' + (r.type === '收入' ? 'income' : 'expense') + '">' + (r.type === '收入' ? '+' : '-') + '¥' + r.amount.toFixed(2) + '</span><button class="btn-del" data-id="' + r.id + '">×</button></div>';
+      item.innerHTML = '<div class="info"><span class="time">' + r.date + '</span><span class="type-tag ' + (r.type === '鏀跺叆' ? 'income' : 'expense') + '">' + r.type + '</span><span class="desc desc-tip" data-full="' + escapeAttr(r.desc) + '" title="' + escapeAttr(r.desc) + '">' + escapeHtml(r.desc) + '</span>' + userTag + '</div><div style="display:flex;align-items:center;gap:12px"><span class="amount ' + (r.type === '鏀跺叆' ? 'income' : 'expense') + '">' + (r.type === '鏀跺叆' ? '+' : '-') + '楼' + r.amount.toFixed(2) + '</span><button class="btn-del" data-id="' + r.id + '">脳</button></div>';
       frag.appendChild(item);
     });
   }
@@ -713,14 +713,14 @@ function renderRecords() {
   container.innerHTML = '';
   container.appendChild(frag);
 
-  // 绑定删除事件（事件委托避免逐个绑定）
+  // 缁戝畾鍒犻櫎浜嬩欢锛堜簨浠跺鎵橀伩鍏嶉€愪釜缁戝畾锛?
   container.querySelectorAll('.btn-del').forEach(function(btn) {
     btn.addEventListener('click', function() {
       deleteRecord(Number(this.getAttribute('data-id')));
     });
   });
 
-  // 描述 tooltip
+  // 鎻忚堪 tooltip
   container.querySelectorAll('.desc-tip').forEach(function(el) {
     var fullText = el.getAttribute('data-full');
     if (fullText.length <= 18) { el.style.cursor = 'default'; return; }
@@ -747,7 +747,7 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-// ============ Service Worker (不阻塞渲染) ============
+// ============ Service Worker (涓嶉樆濉炴覆鏌? ============
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
     navigator.serviceWorker.register('service-worker.js').then(function(reg) {
@@ -765,7 +765,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// ============ 启动 ============
+// ============ 鍚姩 ============
 (function bootstrap() {
   loadCredentials();
   ensureDataFile().then(function() {
