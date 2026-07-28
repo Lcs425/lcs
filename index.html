@@ -112,6 +112,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <button class="btn-add" id="addRecordBtn">+ 添加</button>
       </div>
     </div>
+    <div class="filter-bar" style="grid-column:1/span 2;display:flex;align-items:center;gap:10px;padding:0 0 8px 0">
+      <span style="font-size:14px;font-weight:600;color:#555">汇总 · 用户：</span>
+      <select id="summaryUserFilter" style="padding:6px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:13px;outline:none;min-width:100px"></select>
+    </div>
     <div class="summary-cards" id="summaryCards"></div>
     <div class="card chart-card">
       <h3>趋势分析</h3>
@@ -124,12 +128,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
     <div class="card record-list">
       <h3>消费明细 <span id="syncBadge" style="font-size:11px;color:#aaa;float:right"></span></h3>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
+        <span style="font-size:13px;color:#888">筛选：</span>
+        <select id="recordUserFilter" style="padding:5px 10px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:12px;outline:none"></select>
+        <input type="date" id="recordDateFrom" style="padding:5px 8px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:12px;outline:none;width:130px">
+        <span style="font-size:12px;color:#aaa">至</span>
+        <input type="date" id="recordDateTo" style="padding:5px 8px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:12px;outline:none;width:130px">
+        <button id="clearRecordFilter" style="padding:5px 14px;border:1.5px solid #ddd;background:#fff;border-radius:6px;font-size:12px;cursor:pointer;color:#888">清除</button>
+      </div>
       <div id="recordListContainer"></div>
     </div>
   </div>
 </div>
 
 <div id="toast" class="toast"></div>
+<div id="descTooltip" style="display:none;position:fixed;background:#333;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;max-width:280px;z-index:10000;pointer-events:none;white-space:normal;word-break:break-all;line-height:1.5"></div>
 <div id="updateBanner" class="update-banner">新版本可用，点击更新</div>
 
 <script>
@@ -328,22 +341,44 @@ async function initApp() {
   document.getElementById('recordType').value = '支出';
 
   await loadFromCloud();
+  buildUserDropdowns();
   renderSummary();
   renderChart('all');
   renderRecords();
+
+  // 汇总用户筛选
+  document.getElementById('summaryUserFilter').onchange = () => { renderSummary(); renderChart(document.querySelector('.chart-controls button.active').dataset.type); };
+
+  // 明细筛选
+  document.getElementById('recordUserFilter').onchange = renderRecords;
+  document.getElementById('recordDateFrom').onchange = renderRecords;
+  document.getElementById('recordDateTo').onchange = renderRecords;
+  document.getElementById('clearRecordFilter').onclick = () => {
+    document.getElementById('recordUserFilter').value = 'all';
+    document.getElementById('recordDateFrom').value = '';
+    document.getElementById('recordDateTo').value = '';
+    renderRecords();
+  };
 
   // Auto-sync every 30 seconds
   if (syncTimer) clearInterval(syncTimer);
   syncTimer = setInterval(async () => {
     await loadFromCloud();
+    buildUserDropdowns();
     renderSummary();
     renderChart(document.querySelector('.chart-controls button.active').dataset.type);
     renderRecords();
   }, 30000);
 }
 
-function getUserRecords() {
-  return (allData.records || []).sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+function getUserRecords(filterUser, dateFrom, dateTo) {
+  let records = (allData.records || []);
+  if (filterUser && filterUser !== 'all') {
+    records = records.filter(r => r.user === filterUser);
+  }
+  if (dateFrom) records = records.filter(r => r.date >= dateFrom);
+  if (dateTo) records = records.filter(r => r.date <= dateTo);
+  return records.sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
 }
 
 // ============ 添加记录 ============
@@ -413,9 +448,12 @@ function getDateRange(label) {
   }
 }
 
-function calcSummary(label) {
+function calcSummary(label, filterUser) {
   const { start, end } = getDateRange(label);
-  const records = (allData.records || []).filter(r => r.date >= start && r.date <= end);
+  let records = (allData.records || []).filter(r => r.date >= start && r.date <= end);
+  if (filterUser && filterUser !== 'all') {
+    records = records.filter(r => r.user === filterUser);
+  }
   return {
     income: records.filter(r => r.type === '收入').reduce((s, r) => s + r.amount, 0),
     expense: records.filter(r => r.type === '支出').reduce((s, r) => s + r.amount, 0)
@@ -423,16 +461,24 @@ function calcSummary(label) {
 }
 
 function renderSummary() {
+  const filterUser = document.getElementById('summaryUserFilter').value;
   const labels = ['今日', '昨日', '本周', '上周', '本月', '上月', '本年', '去年'];
   const container = document.getElementById('summaryCards');
   container.innerHTML = labels.map(l => {
-    const s = calcSummary(l);
+    const s = calcSummary(l, filterUser);
     return `<div class="summary-item">
       <div class="label">${l}</div>
       <div class="income">收入 ¥${s.income.toFixed(2)}</div>
       <div class="expense">支出 ¥${s.expense.toFixed(2)}</div>
     </div>`;
   }).join('');
+}
+
+function buildUserDropdowns() {
+  const users = Object.keys(allData.users || {});
+  const opts = '<option value="all">全部用户</option>' + users.map(u => `<option value="${u}">${u}</option>`).join('');
+  document.getElementById('summaryUserFilter').innerHTML = opts;
+  document.getElementById('recordUserFilter').innerHTML = opts;
 }
 
 // ============ 图表 ============
@@ -491,11 +537,14 @@ document.querySelectorAll('.chart-controls button').forEach(btn => {
 
 // ============ 明细列表 ============
 function renderRecords() {
-  const records = getUserRecords();
+  const ruf = document.getElementById('recordUserFilter').value;
+  const dateFrom = document.getElementById('recordDateFrom').value;
+  const dateTo = document.getElementById('recordDateTo').value;
+  const records = getUserRecords(ruf, dateFrom, dateTo);
   const container = document.getElementById('recordListContainer');
 
   if (records.length === 0) {
-    container.innerHTML = '<div class="empty-state">暂无记录，快去记一笔吧</div>';
+    container.innerHTML = '<div class="empty-state">暂无匹配记录</div>';
     return;
   }
 
@@ -504,7 +553,7 @@ function renderRecords() {
       <div class="info">
         <span class="time">${r.date}</span>
         <span class="type-tag ${r.type === '收入' ? 'income' : 'expense'}">${r.type}</span>
-        <span class="desc">${escapeHtml(r.desc)}</span>
+        <span class="desc desc-tip" data-full="${escapeAttr(r.desc)}" title="${escapeAttr(r.desc)}">${escapeHtml(r.desc)}</span>
         ${r.user !== currentUser ? `<span style="font-size:11px;color:#aaa">@${r.user}</span>` : ''}
       </div>
       <div style="display:flex;align-items:center;gap:12px">
@@ -513,6 +562,29 @@ function renderRecords() {
       </div>
     </div>
   `).join('');
+
+  // Attach tooltip logic
+  document.querySelectorAll('.desc-tip').forEach(el => {
+    const fullText = el.getAttribute('data-full');
+    if (fullText.length <= 20) {
+      el.style.cursor = 'default';
+      return;
+    }
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', function(e) {
+      const tip = document.getElementById('descTooltip');
+      tip.textContent = fullText;
+      tip.style.display = 'block';
+      tip.style.left = Math.min(e.clientX + 14, window.innerWidth - 290) + 'px';
+      tip.style.top = (e.clientY - 40) + 'px';
+      clearTimeout(tip._t);
+      tip._t = setTimeout(() => tip.style.display = 'none', 3000);
+    });
+  });
+}
+
+function escapeAttr(str) {
+  return str.replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 function escapeHtml(str) {
