@@ -85,7 +85,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#3
 .toast.error{background:#4a90d9}
 .update-banner{position:fixed;bottom:0;left:0;right:0;background:#4a90d9;color:#fff;padding:14px;text-align:center;font-size:14px;z-index:999;cursor:pointer;transform:translateY(100%);transition:transform .3s;padding-bottom:max(14px,env(safe-area-inset-bottom))}
 .update-banner.show{transform:translateY(0)}
-.bottom-bar{position:fixed;bottom:0;left:0;right:0;width:100%;background:#fff;border-top:1px solid #e8e8e8;display:none;justify-content:space-around;align-items:center;padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:100}
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;width:100%;height:56px;background:#fff;border-top:1px solid #e8e8e8;display:none;justify-content:space-around;align-items:center;padding:6px 0 max(6px,env(safe-area-inset-bottom,0px));z-index:1000;box-sizing:content-box}
 .bottom-bar button{flex:1;background:none;border:none;font-size:12px;color:#666;padding:6px 0;cursor:pointer;text-align:center;min-height:44px;transition:transform .15s}
 .bottom-bar button:active{transform:scale(.94)}
 .bottom-bar button .icon{display:block;font-size:20px;margin-bottom:2px}
@@ -123,19 +123,19 @@ html,body{overflow-x:hidden;max-width:100vw}
 input,select,button{max-width:100%}
 .summary-cards{overflow-x:hidden}
 
-/* === 消费明细筛选区（同行展示） === */
-.record-filter-row{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;margin-bottom:14px;max-width:100%;overflow-x:hidden}
-.record-filter-row .rf-label{font-size:13px;color:#666;white-space:nowrap;flex-shrink:0}
-.record-filter-row .rf-select{padding:6px 10px;border:1px solid #d9d9d9;border-radius:6px;font-size:13px;outline:none;min-height:36px;background:#fff;color:#333;flex:0 1 auto;max-width:120px}
-.record-filter-row .rf-date{padding:6px 8px;border:1px solid #d9d9d9;border-radius:6px;font-size:13px;outline:none;min-height:36px;background:#fff;color:#333;color-scheme:light;flex:1 1 auto;min-width:0;width:auto}
-.record-filter-row .rf-clear{padding:6px 14px;border:1px solid #d9d9d9;background:#fff;border-radius:6px;font-size:13px;cursor:pointer;color:#666;min-height:36px;flex-shrink:0;white-space:nowrap}
+/* === 消费明细筛选区（垂直布局） === */
+.record-filter-row{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;max-width:100%}
+.record-filter-row .rf-row{display:flex;align-items:center;gap:8px}
+.record-filter-row .rf-label{font-size:13px;color:#666;white-space:nowrap;flex-shrink:0;min-width:70px;text-align:right}
+.record-filter-row .rf-select{padding:6px 10px;border:1px solid #d9d9d9;border-radius:6px;font-size:13px;outline:none;min-height:36px;background:#fff;color:#333;flex:1;max-width:200px}
+.record-filter-row .rf-date{padding:6px 8px;border:1px solid #d9d9d9;border-radius:6px;font-size:13px;outline:none;min-height:36px;background:#fff;color:#333;color-scheme:light;flex:1}
+.record-filter-row .rf-clear{padding:6px 20px;border:1px solid #d9d9d9;background:#fff;border-radius:6px;font-size:13px;cursor:pointer;color:#666;min-height:36px;white-space:nowrap}
+.record-filter-row .rf-action-row{justify-content:flex-end}
 @media(max-width:480px){
-  .record-filter-row{gap:4px}
-  .record-filter-row .rf-label{font-size:12px}
-  .record-filter-row .rf-label:first-of-type{display:none}
-  .record-filter-row .rf-select{max-width:90px;font-size:12px;padding:5px 6px}
-  .record-filter-row .rf-date{font-size:12px;padding:5px 6px}
-  .record-filter-row .rf-clear{font-size:12px;padding:5px 10px}
+  .record-filter-row .rf-label{font-size:12px;min-width:55px}
+  .record-filter-row .rf-select{font-size:12px;max-width:150px}
+  .record-filter-row .rf-date{font-size:12px}
+  .record-filter-row .rf-clear{font-size:12px}
 }
 </style>
 </head>
@@ -190,24 +190,34 @@ input,select,button{max-width:100%}
     <div class="card record-list">
       <h3>消费明细 <span id="syncBadge" style="font-size:11px;color:#999;float:right"></span></h3>
       <div class="record-filter-row">
-        <span class="rf-label">筛选：</span>
-        <select id="recordUserFilter" class="rf-select"></select>
-        <span class="rf-label">开始：</span>
-        <input type="date" id="recordDateFrom" class="rf-date">
-        <span class="rf-label">结束：</span>
-        <input type="date" id="recordDateTo" class="rf-date">
-        <button id="clearRecordFilter" class="rf-clear">清除</button>
+        <div class="rf-row rf-user-row">
+          <span class="rf-label">筛选用户：</span>
+          <select id="recordUserFilter" class="rf-select"></select>
+        </div>
+        <div class="rf-row rf-date-row">
+          <span class="rf-label">开始：</span>
+          <input type="date" id="recordDateFrom" class="rf-date">
+        </div>
+        <div class="rf-row rf-date-row">
+          <span class="rf-label">结束：</span>
+          <input type="date" id="recordDateTo" class="rf-date">
+        </div>
+        <div class="rf-row rf-action-row">
+          <button id="clearRecordFilter" class="rf-clear">清除筛选</button>
+        </div>
       </div>
       <div id="recordListContainer"></div>
     </div>
   </div>
+</div>
+
   <div class="bottom-bar" id="bottomBar">
     <button id="navAdd"><span class="icon">✏️</span>记一笔</button>
     <button id="navSummary"><span class="icon">📊</span>汇总</button>
     <button id="navChart"><span class="icon">📈</span>趋势</button>
     <button id="navRecords"><span class="icon">📋</span>明细</button>
   </div>
-</div>
+
 
 <div id="toast" class="toast"></div>
 <div id="descTooltip" style="display:none;position:fixed;background:#333;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;max-width:280px;z-index:10000;pointer-events:none;white-space:normal;word-break:break-all;line-height:1.5"></div>
