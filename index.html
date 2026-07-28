@@ -9,6 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#ffffff">
 <title>记账本</title>
+<!-- version: v7 -->
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
@@ -754,16 +755,12 @@ if ('serviceWorker' in navigator) {
         var newWorker = reg.installing;
         newWorker.addEventListener('statechange', function() {
           if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            var banner = document.getElementById('updateBanner');
-            banner.classList.add('show');
-            banner.onclick = function() {
-              newWorker.postMessage({ action: 'skipWaiting' });
-              window.location.reload();
-            };
+            newWorker.postMessage({ action: 'skipWaiting' });
+            window.location.reload();
           }
         });
       });
-      setInterval(function() { reg.update(); }, 60000);
+      setInterval(function() { reg.update(); }, 30000);
     });
   });
 }
