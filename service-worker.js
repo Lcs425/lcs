@@ -1,5 +1,5 @@
-// 记账本 Service Worker - v3 (Cache-First with Background Update)
-const CACHE = 'jizhang-v3';
+// 记账本 Service Worker - v5 (Cache-First + Auto Refresh)
+const CACHE = 'jizhang-v5';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/icon-192.png'];
 
 self.addEventListener('install', e => {
