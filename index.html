@@ -772,7 +772,7 @@ function renderAuthUI() {
 
     ? '还没有账户？<a id="toggleLink" href="javascript:void(0)">立即注册</a>'
 
-    : '已有账户？<a id="toggleLink" href="javascript:void(0)">去登录/a>';
+    : '已有账户？<a id="toggleLink" href="javascript:void(0)">去登录</a>';
 
   document.getElementById('toggleLink').onclick = function() {
 
@@ -1052,7 +1052,7 @@ document.getElementById('addRecordBtn').addEventListener('click', async function
 
   renderRecords();
 
-  toast('已添加);
+  toast('已添加');
 
 });
 
@@ -1106,7 +1106,7 @@ async function deleteRecord(id) {
 
   renderRecords();
 
-  toast('已删除);
+  toast('已删除');
 
 }
 
