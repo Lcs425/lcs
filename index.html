@@ -626,7 +626,7 @@ async function loadFromCloud() {
 
     allData = JSON.parse(decodeURIComponent(escape(decoded)));
 
-    document.getElementById('syncStatus').textContent = '数据已同步;
+    document.getElementById('syncStatus').textContent = '数据已同步';
 
 
 
@@ -656,7 +656,7 @@ async function loadFromCloud() {
 
     console.warn('Load from cloud failed:', e.message);
 
-    document.getElementById('syncStatus').textContent = '离线模式（数据仅本地）;
+    document.getElementById('syncStatus').textContent = '离线模式（数据仅本地）';
 
     try {
 
@@ -690,7 +690,7 @@ async function saveToCloud(retryCount) {
 
     dataSha = result.content.sha;
 
-    document.getElementById('syncBadge').textContent = '已同步;
+    document.getElementById('syncBadge').textContent = '已同步';
 
     return true;
 
@@ -766,7 +766,7 @@ function renderAuthUI() {
 
   document.getElementById('authBtn').textContent = authMode === 'login' ? '登录' : '注册'
 
-  document.getElementById('authSubtitle').textContent = authMode === 'login' ? '登录你的账户' : '创建新账户;
+  document.getElementById('authSubtitle').textContent = authMode === 'login' ? '登录你的账户' : '创建新账户';
 
   document.getElementById('authToggle').innerHTML = authMode === 'login'
 
