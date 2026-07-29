@@ -642,7 +642,7 @@ async function loadFromCloud() {
 
           await saveToCloud();
 
-          toast('本地数据已上传云端);
+          toast('本地数据已上传云端');
 
         }
 
@@ -792,7 +792,7 @@ document.getElementById('authBtn').addEventListener('click', async function() {
 
   var pwd = document.getElementById('password').value.trim();
 
-  if (!uname || !pwd) return toast('请输入用户名和密码, true);
+  if (!uname || !pwd) return toast('请输入用户名和密码', true);
 
 
 
@@ -844,7 +844,7 @@ document.getElementById('authBtn').addEventListener('click', async function() {
 
     renderAuthUI();
 
-    return toast('用户不存在, true);
+    return toast('用户不存在', true);
 
   }
 
@@ -1012,9 +1012,9 @@ document.getElementById('addRecordBtn').addEventListener('click', async function
 
 
 
-  if (!date || !amount || amount <= 0) return toast('请填写完整的日期和金额, true);
+  if (!date || !amount || amount <= 0) return toast('请填写完整的日期和金额', true);
 
-  if (!desc) return toast('请输入消费描述, true);
+  if (!desc) return toast('请输入消费描述', true);
 
 
 
