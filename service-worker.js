@@ -1,8 +1,8 @@
-// 记账本 Service Worker - v6 (Cache-First + Auto Refresh)
+// 记账本 Service Worker - v7 (Network-First for HTML + No HTML Precache)
 
-const CACHE = 'jizhang-v7';
+const CACHE = 'jizhang-v8';
 
-const ASSETS = ['/', '/index.html', '/manifest.json', '/icon-192.png'];
+const ASSETS = ['/manifest.json', '/icon-192.png'];
 
 
 
@@ -50,33 +50,29 @@ self.addEventListener('fetch', e => {
 
 
 
-  // HTML navigation: Stale-while-revalidate (cache-first, background update)
+  // HTML navigation: Network-First (try network, fallback to cache)
 
   if (e.request.mode === 'navigate') {
 
     e.respondWith(
 
-      caches.open(CACHE).then(cache =>
+      fetch(e.request).then(netResp => {
 
-        cache.match('/index.html').then(cached => {
+        if (netResp && netResp.status === 200) {
 
-          const fetchPromise = fetch(e.request).then(netResp => {
+          const respClone = netResp.clone();
 
-            if (netResp && netResp.status === 200) {
+          caches.open(CACHE).then(c => c.put('/index.html', respClone));
 
-              cache.put('/index.html', netResp.clone());
+        }
 
-            }
+        return netResp;
 
-            return netResp;
+      }).catch(() => {
 
-          }).catch(() => cached);
+        return caches.open(CACHE).then(cache => cache.match('/index.html'));
 
-          return cached || fetchPromise;
-
-        })
-
-      )
+      })
 
     );
 
@@ -125,4 +121,3 @@ self.addEventListener('message', e => {
   }
 
 });
-
