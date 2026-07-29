@@ -1,9 +1,8 @@
 // 记账本 Service Worker - v7 (Network-First for HTML + No HTML Precache)
 
-const CACHE = 'jizhang-v9';
+const CACHE = 'jizhang-v10';
 
 const ASSETS = ['/manifest.json', '/icon-192.png'];
-
 
 
 self.addEventListener('install', e => {
@@ -17,7 +16,6 @@ self.addEventListener('install', e => {
   );
 
 });
-
 
 
 self.addEventListener('activate', e => {
@@ -37,17 +35,14 @@ self.addEventListener('activate', e => {
 });
 
 
-
 self.addEventListener('fetch', e => {
 
   const url = new URL(e.request.url);
 
 
-
   // Don't cache API calls
 
   if (url.hostname === 'api.github.com') return;
-
 
 
   // HTML navigation: Network-First (try network, fallback to cache)
@@ -81,7 +76,6 @@ self.addEventListener('fetch', e => {
   }
 
 
-
   // Static assets: Cache-first with network fallback
 
   e.respondWith(
@@ -109,7 +103,6 @@ self.addEventListener('fetch', e => {
   );
 
 });
-
 
 
 self.addEventListener('message', e => {
