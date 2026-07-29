@@ -1,6 +1,6 @@
 // 记账本 Service Worker - v6 (Cache-First + Auto Refresh)
 
-const CACHE = 'jizhang-v6';
+const CACHE = 'jizhang-v7';
 
 const ASSETS = ['/', '/index.html', '/manifest.json', '/icon-192.png'];
 
