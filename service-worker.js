@@ -1,6 +1,6 @@
 // 记账本 Service Worker - v7 (Network-First for HTML + No HTML Precache)
 
-const CACHE = 'jizhang-v10';
+const CACHE = 'jizhang-v11';
 
 const ASSETS = ['/manifest.json', '/icon-192.png'];
 
@@ -11,7 +11,19 @@ self.addEventListener('install', e => {
 
   e.waitUntil(
 
-    caches.open(CACHE).then(c => c.addAll(ASSETS))
+    caches.open(CACHE).then(function(cache) {
+
+      return Promise.allSettled(ASSETS.map(function(url) {
+
+        return cache.add(url).catch(function(err) {
+
+          console.warn('SW: failed to cache', url, err);
+
+        });
+
+      }));
+
+    })
 
   );
 
