@@ -1,6 +1,6 @@
 // 记账本 Service Worker - v7 (Network-First for HTML + No HTML Precache)
 
-const CACHE = 'jizhang-v12';
+const CACHE = 'jizhang-v13';
 
 const ASSETS = ['/manifest.json', '/icon-192.png'];
 
