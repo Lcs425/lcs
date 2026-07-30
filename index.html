@@ -302,6 +302,9 @@ input,select,button{max-width:100%}
 .admin-hint{font-size:12px;color:#aaa;margin-top:6px}
 .btn-admin{background:#f0f0f0;border:1px solid #e0e0e0;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;color:#666;margin-left:6px;min-height:36px;transition:all .15s}
 .btn-admin:active{transform:scale(.96);background:#e8e8e8}
+.btn-chpwd{background:none;border:1px solid #e0e0e0;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;color:#888;margin-left:4px;min-height:36px;transition:all .15s}.btn-chpwd:active{transform:scale(.96);color:#4a90d9}
+.pwd-reset-row{display:flex;gap:8px;align-items:center;margin-top:8px}.pwd-reset-row input{flex:1;padding:10px 12px;border:1px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;min-height:40px;transition:border .2s}.pwd-reset-row input:focus{border-color:#4a90d9}.pwd-reset-row button{flex-shrink:0;padding:10px 16px;background:#4a90d9;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;min-height:40px;transition:opacity .15s}.pwd-reset-row button:active{opacity:.85}
+.pwd-form-group{margin-bottom:16px}.pwd-form-group label{display:block;font-size:13px;color:#888;margin-bottom:6px}.pwd-form-group input{width:100%;padding:12px;border:1px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;min-height:46px;box-sizing:border-box;transition:border .2s}.pwd-form-group input:focus{border-color:#4a90d9}.pwd-msg{font-size:12px;margin-top:4px;min-height:18px}
 
 </style>
 
@@ -348,6 +351,7 @@ input,select,button{max-width:100%}
       <span id="currentUser"></span>
 
       <button class="btn-logout" id="logoutBtn">退出</button>
+      <button class="btn-chpwd" id="chpwdBtn">修改密码</button>
       <button class="btn-admin hidden" id="adminBtn">管理</button>
 
     </div>
@@ -471,6 +475,14 @@ input,select,button{max-width:100%}
         <div class="admin-checkbox-list" id="adminPermissionCheckboxes"></div>
         <p class="admin-hint" id="adminPermissionHint"></p>
       </div>
+      <div class="admin-section">
+        <h4>重置密码</h4>
+        <div class="pwd-reset-row">
+          <input type="password" id="adminResetPwd" placeholder="输入新密码">
+          <button id="adminResetPwdBtn">重置</button>
+        </div>
+        <p class="admin-hint" id="adminResetPwdMsg"></p>
+      </div>
     </div>
     <div class="admin-modal-footer">
       <button class="btn btn-primary" id="saveAdminPermissions">保存权限</button>
@@ -478,6 +490,33 @@ input,select,button{max-width:100%}
   </div>
 </div>
 
+<div id="chpwdPanel" class="admin-panel hidden">
+  <div class="admin-overlay" id="chpwdOverlay"></div>
+  <div class="admin-modal">
+    <div class="admin-modal-header">
+      <h3>修改密码</h3>
+      <button id="closeChpwdPanel" type="button">&times;</button>
+    </div>
+    <div class="admin-modal-body">
+      <div class="pwd-form-group">
+        <label>当前密码</label>
+        <input type="password" id="chpwdOld" placeholder="请输入当前密码">
+      </div>
+      <div class="pwd-form-group">
+        <label>新密码</label>
+        <input type="password" id="chpwdNew" placeholder="请输入新密码">
+      </div>
+      <div class="pwd-form-group">
+        <label>确认新密码</label>
+        <input type="password" id="chpwdConfirm" placeholder="请再次输入新密码">
+      </div>
+      <div class="pwd-msg" id="chpwdMsg" style="color:#e74c3c"></div>
+    </div>
+    <div class="admin-modal-footer">
+      <button class="btn btn-primary" id="saveChpwd">确认修改</button>
+    </div>
+  </div>
+</div>
 
 <div class="bottom-bar" id="bottomBar">
 
@@ -1632,9 +1671,64 @@ document.getElementById('saveAdminPermissions').addEventListener('click', async 
   closeAdminPanel();
 });
 
+// 密码修改事件
+document.getElementById('chpwdBtn').addEventListener('click', openChpwdPanel);
+document.getElementById('closeChpwdPanel').addEventListener('click', closeChpwdPanel);
+document.getElementById('chpwdOverlay').addEventListener('click', closeChpwdPanel);
+document.getElementById('saveChpwd').addEventListener('click', changePassword);
+document.getElementById('adminResetPwdBtn').addEventListener('click', adminResetPassword);
+
 // 注册时自动设权限
 var origRegister = null; // handled inline below
 
+
+// ============ 密码修改 ============
+
+function openChpwdPanel() {
+  document.getElementById('chpwdOld').value = '';
+  document.getElementById('chpwdNew').value = '';
+  document.getElementById('chpwdConfirm').value = '';
+  document.getElementById('chpwdMsg').textContent = '';
+  document.getElementById('chpwdPanel').classList.remove('hidden');
+}
+
+function closeChpwdPanel() {
+  document.getElementById('chpwdPanel').classList.add('hidden');
+}
+
+async function changePassword() {
+  var oldPwd = document.getElementById('chpwdOld').value.trim();
+  var newPwd = document.getElementById('chpwdNew').value.trim();
+  var confirmPwd = document.getElementById('chpwdConfirm').value.trim();
+  var msg = document.getElementById('chpwdMsg');
+
+  if (!oldPwd || !newPwd || !confirmPwd) { msg.textContent = '请填写所有密码字段'; return; }
+  if (allData.users[currentUser].password !== oldPwd) { msg.textContent = '当前密码不正确'; return; }
+  if (newPwd.length < 3) { msg.textContent = '新密码至少3位'; return; }
+  if (newPwd !== confirmPwd) { msg.textContent = '两次新密码不一致'; return; }
+
+  allData.users[currentUser].password = newPwd;
+  await saveToCloud();
+  msg.style.color = '#27ae60'; msg.textContent = '密码修改成功';
+  setTimeout(closeChpwdPanel, 1200);
+}
+
+// ============ 管理员重置密码 ============
+
+async function adminResetPassword() {
+  var targetUser = document.getElementById('adminUserSelect').value;
+  var newPwd = document.getElementById('adminResetPwd').value.trim();
+  var msg = document.getElementById('adminResetPwdMsg');
+
+  if (!targetUser) { msg.textContent = '请先选择用户'; return; }
+  if (!newPwd) { msg.textContent = '请输入新密码'; return; }
+  if (newPwd.length < 3) { msg.textContent = '新密码至少3位'; return; }
+
+  allData.users[targetUser].password = newPwd;
+  await saveToCloud();
+  msg.style.color = '#27ae60'; msg.textContent = targetUser + ' 密码已重置为 ' + newPwd;
+  document.getElementById('adminResetPwd').value = '';
+}
 
 // ============ Service Worker (不阻塞渲染 ============
 
