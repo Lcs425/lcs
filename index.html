@@ -685,15 +685,7 @@ async function loadFromCloud() {
 
 
 
-    // 如果没有admin，设第一个注册用户为admin
-  if (!allData.users) allData.users = {};
-  var userList = Object.keys(allData.users);
-  var hasAdmin = userList.some(function(u) { return allData.users[u].isAdmin === true; });
-  if (!hasAdmin && userList.length > 0) {
-    allData.users[userList[0]].isAdmin = true;
-    await saveToCloud();
-  }
-  if (!allData.permissions) allData.permissions = {};
+      if (!allData.permissions) allData.permissions = {};
 
   if (!Object.keys(allData.users).length && !allData.records.length) {
 
