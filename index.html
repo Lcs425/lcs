@@ -278,6 +278,31 @@ input,select,button{max-width:100%}
 
 }
 
+
+/* ===== Admin Panel ===== */
+.admin-panel{position:fixed;top:0;left:0;width:100%;height:100%;z-index:2000;display:flex;align-items:center;justify-content:center}
+.admin-panel.hidden{display:none!important}
+.admin-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45)}
+.admin-modal{position:relative;background:#fff;border-radius:10px;width:92%;max-width:460px;max-height:82vh;display:flex;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,.12)}
+.admin-modal-header{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:1px solid #f0f0f0}
+.admin-modal-header h3{margin:0;font-size:18px;color:#333;font-weight:700}
+.admin-modal-header button{background:none;border:none;font-size:24px;cursor:pointer;color:#bbb;padding:0 4px;line-height:1;min-height:40px;min-width:40px;transition:color .15s}
+.admin-modal-header button:active{color:#333}
+.admin-modal-body{flex:1;overflow-y:auto;padding:20px}
+.admin-modal-footer{padding:16px 20px;border-top:1px solid #f0f0f0}
+.admin-section{margin-bottom:22px}
+.admin-section:last-child{margin-bottom:0}
+.admin-section h4{font-size:14px;color:#888;margin-bottom:10px;font-weight:600}
+.admin-section select{width:100%;padding:12px;border:1px solid #e0e0e0;border-radius:8px;font-size:14px;outline:none;min-height:46px;background:#fafafa;color:#333;transition:border .2s}
+.admin-section select:focus{border-color:#4a90d9;background:#fff}
+.admin-checkbox-list{display:flex;flex-direction:column;gap:4px;max-height:260px;overflow-y:auto}
+.admin-checkbox-item{display:flex;align-items:center;gap:12px;padding:10px 0;font-size:14px;color:#333;border-bottom:1px solid #f8f8f8}
+.admin-checkbox-item:last-child{border-bottom:none}
+.admin-checkbox-item input[type=checkbox]{width:20px;height:20px;accent-color:#4a90d9;flex-shrink:0}
+.admin-hint{font-size:12px;color:#aaa;margin-top:6px}
+.btn-admin{background:#f0f0f0;border:1px solid #e0e0e0;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;color:#666;margin-left:6px;min-height:36px;transition:all .15s}
+.btn-admin:active{transform:scale(.96);background:#e8e8e8}
+
 </style>
 
 </head>
@@ -323,6 +348,7 @@ input,select,button{max-width:100%}
       <span id="currentUser"></span>
 
       <button class="btn-logout" id="logoutBtn">退出</button>
+      <button class="btn-admin hidden" id="adminBtn">管理</button>
 
     </div>
 
@@ -426,7 +452,34 @@ input,select,button{max-width:100%}
 
 
 
-  <div class="bottom-bar" id="bottomBar">
+  
+<div id="adminPanel" class="admin-panel hidden">
+  <div class="admin-overlay" id="adminOverlay"></div>
+  <div class="admin-modal">
+    <div class="admin-modal-header">
+      <h3>权限管理</h3>
+      <button id="closeAdminPanel" type="button">&times;</button>
+    </div>
+    <div class="admin-modal-body">
+      <div class="admin-section">
+        <h4>选择用户</h4>
+        <select id="adminUserSelect"></select>
+        <p class="admin-hint">选择要管理权限的用户</p>
+      </div>
+      <div class="admin-section">
+        <h4>该用户可查看的记录</h4>
+        <div class="admin-checkbox-list" id="adminPermissionCheckboxes"></div>
+        <p class="admin-hint" id="adminPermissionHint"></p>
+      </div>
+    </div>
+    <div class="admin-modal-footer">
+      <button class="btn btn-primary" id="saveAdminPermissions">保存权限</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="bottom-bar" id="bottomBar">
 
     <button id="navAdd"><span class="icon">✏️</span>记一笔</button>
 
@@ -549,6 +602,8 @@ var dataSha = null;
 var allData = { users: {}, records: [] };
 
 var currentUser = null;
+var isAdmin = false;
+var permissions = {};
 
 var syncTimer = null;
 
@@ -630,7 +685,17 @@ async function loadFromCloud() {
 
 
 
-    if (!Object.keys(allData.users).length && !allData.records.length) {
+    // 如果没有admin，设第一个注册用户为admin
+  if (!allData.users) allData.users = {};
+  var userList = Object.keys(allData.users);
+  var hasAdmin = userList.some(function(u) { return allData.users[u].isAdmin === true; });
+  if (!hasAdmin && userList.length > 0) {
+    allData.users[userList[0]].isAdmin = true;
+    await saveToCloud();
+  }
+  if (!allData.permissions) allData.permissions = {};
+
+  if (!Object.keys(allData.users).length && !allData.records.length) {
 
       try {
 
@@ -815,6 +880,8 @@ document.getElementById('authBtn').addEventListener('click', async function() {
     }
 
     allData.users[uname] = { password: pwd, createdAt: new Date().toISOString() };
+    if (!allData.permissions) allData.permissions = {};
+    if (!allData.permissions[uname]) allData.permissions[uname] = [];
 
     await saveToCloud();
 
@@ -881,11 +948,11 @@ document.getElementById('authBtn').addEventListener('click', async function() {
 
 
 document.getElementById('logoutBtn').addEventListener('click', function() {
-
   currentUser = null;
-
+  isAdmin = false;
+  document.getElementById('adminBtn').classList.add('hidden');
+  document.getElementById('adminPanel').classList.add('hidden');
   document.getElementById('authSection').classList.remove('hidden');
-
   document.getElementById('appSection').classList.add('hidden');
 
   loadCredentials();
@@ -905,8 +972,14 @@ var trendChart = null;
 
 
 async function initApp() {
-
   document.getElementById('recordDate').value = new Date().toISOString().split('T')[0];
+  if (allData.users[currentUser] && allData.users[currentUser].isAdmin) {
+    isAdmin = true;
+    document.getElementById('adminBtn').classList.remove('hidden');
+  } else {
+    isAdmin = false;
+    document.getElementById('adminBtn').classList.add('hidden');
+  }
 
   document.getElementById('recordAmount').value = '';
 
@@ -979,21 +1052,17 @@ async function initApp() {
 
 
 function getUserRecords(filterUser, dateFrom, dateTo) {
-
   var records = (allData.records || []);
-
-  if (filterUser && filterUser !== 'all') {
-
-    records = records.filter(function(r) { return r.user === filterUser; });
-
+  if (!isAdmin) {
+    var visibleUsers = getVisibleUsers();
+    records = records.filter(function(r) { return visibleUsers.indexOf(r.user) !== -1; });
   }
-
+  if (filterUser && filterUser !== 'all') {
+    records = records.filter(function(r) { return r.user === filterUser; });
+  }
   if (dateFrom) records = records.filter(function(r) { return r.date >= dateFrom; });
-
   if (dateTo) records = records.filter(function(r) { return r.date <= dateTo; });
-
   return records.sort(function(a, b) { return b.date.localeCompare(a.date) || b.id - a.id; });
-
 }
 
 
@@ -1169,19 +1238,16 @@ function getDateRange(label) {
 
 
 function calcSummary(label, filterUser) {
-
   var range = getDateRange(label);
-
   var records = (allData.records || []).filter(function(r) {
-
     return r.date >= range.start && r.date <= range.end;
-
   });
-
+  if (!isAdmin) {
+    var vu = getVisibleUsers();
+    records = records.filter(function(r) { return vu.indexOf(r.user) !== -1; });
+  }
   if (filterUser && filterUser !== 'all') {
-
     records = records.filter(function(r) { return r.user === filterUser; });
-
   }
 
   return {
@@ -1232,16 +1298,21 @@ function renderSummary() {
 
 
 
+function getVisibleUsers() {
+  if (isAdmin) return Object.keys(allData.users || {});
+  var users = [currentUser];
+  var perm = (allData.permissions || {})[currentUser] || [];
+  perm.forEach(function(u) {
+    if (users.indexOf(u) === -1) users.push(u);
+  });
+  return users;
+}
+
 function buildUserDropdowns() {
-
-  var users = Object.keys(allData.users || {});
-
-  var opts = '<option value="all">全部用户</option>' + users.map(function(u) { return '<option value="' + u + '">' + u + '</option>'; }).join('');
-
+  var visibleUsers = getVisibleUsers();
+  var opts = '<option value="all">全部可见</option>' + visibleUsers.map(function(u) { return '<option value="' + u + '">' + u + '</option>'; }).join('');
   document.getElementById('summaryUserFilter').innerHTML = opts;
-
   document.getElementById('recordUserFilter').innerHTML = opts;
-
 }
 
 
@@ -1249,9 +1320,11 @@ function buildUserDropdowns() {
 // ============ 图表 ============
 
 function renderChart(filterType) {
-
   var records = allData.records || [];
-
+  if (!isAdmin) {
+    var vu2 = getVisibleUsers();
+    records = records.filter(function(r) { return vu2.indexOf(r.user) !== -1; });
+  }
   var filtered = filterType === 'all' ? records : records.filter(function(r) { return r.type === filterType; });
 
 
@@ -1497,6 +1570,77 @@ function escapeHtml(str) {
 
 }
 
+
+
+
+// ============ 权限管理面板 ============
+
+function buildAdminPanel() {
+  var users = Object.keys(allData.users || {}).filter(function(u) { return u !== currentUser; });
+  var select = document.getElementById('adminUserSelect');
+  select.innerHTML = '<option value="">-- 选择用户 --</option>' + users.map(function(u) { return '<option value="' + u + '">' + u + '</option>'; }).join('');
+  
+  document.getElementById('adminPermissionCheckboxes').innerHTML = '';
+  document.getElementById('adminPermissionHint').textContent = '';
+  
+  select.onchange = function() {
+    var targetUser = select.value;
+    if (!targetUser) {
+      document.getElementById('adminPermissionCheckboxes').innerHTML = '';
+      document.getElementById('adminPermissionHint').textContent = '';
+      return;
+    }
+    renderPermissionCheckboxes(targetUser);
+  };
+}
+
+function renderPermissionCheckboxes(targetUser) {
+  var allUsers = Object.keys(allData.users || {}).filter(function(u) { return u !== targetUser; });
+  var granted = (allData.permissions || {})[targetUser] || [];
+  var container = document.getElementById('adminPermissionCheckboxes');
+  var html = allUsers.map(function(u) {
+    var checked = granted.indexOf(u) !== -1 ? ' checked' : '';
+    return '<label class="admin-checkbox-item"><input type="checkbox" value="' + u + '"' + checked + '><span>' + u + '</span></label>';
+  }).join('');
+  container.innerHTML = html || '<p style="color:#999;font-size:13px">没有其他用户</p>';
+  document.getElementById('adminPermissionHint').textContent = '勾选后，' + targetUser + ' 即可查看对应用户的记账记录';
+}
+
+function openAdminPanel() {
+  buildAdminPanel();
+  document.getElementById('adminPanel').classList.remove('hidden');
+}
+
+function closeAdminPanel() {
+  document.getElementById('adminPanel').classList.add('hidden');
+}
+
+document.getElementById('adminBtn').addEventListener('click', openAdminPanel);
+document.getElementById('closeAdminPanel').addEventListener('click', closeAdminPanel);
+document.getElementById('adminOverlay').addEventListener('click', closeAdminPanel);
+
+document.getElementById('saveAdminPermissions').addEventListener('click', async function() {
+  var targetUser = document.getElementById('adminUserSelect').value;
+  if (!targetUser) return toast('请先选择一个用户', true);
+  
+  var checkboxes = document.querySelectorAll('#adminPermissionCheckboxes input[type=checkbox]');
+  var granted = [];
+  checkboxes.forEach(function(cb) { if (cb.checked) granted.push(cb.value); });
+  
+  if (!allData.permissions) allData.permissions = {};
+  allData.permissions[targetUser] = granted;
+  
+  await saveToCloud();
+  buildUserDropdowns();
+  renderSummary();
+  renderChart(document.querySelector('.chart-controls button.active').dataset.type);
+  renderRecords();
+  toast('权限已保存');
+  closeAdminPanel();
+});
+
+// 注册时自动设权限
+var origRegister = null; // handled inline below
 
 
 // ============ Service Worker (不阻塞渲染 ============
