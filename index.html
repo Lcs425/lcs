@@ -1120,7 +1120,11 @@ function getDateRange(label) {
 
   var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-  var s = function(d) { return d.toISOString().split('T')[0]; };
+  var s = function(d) {
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, '0');
+    var day = String(d.getDate()).padStart(2, '0');
+    return y + '-' + m + '-' + day; };
 
   var day = 86400000;
 
