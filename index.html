@@ -973,13 +973,6 @@ var trendChart = null;
 
 async function initApp() {
   document.getElementById('recordDate').value = new Date().toISOString().split('T')[0];
-  if (allData.users[currentUser] && allData.users[currentUser].isAdmin) {
-    isAdmin = true;
-    document.getElementById('adminBtn').classList.remove('hidden');
-  } else {
-    isAdmin = false;
-    document.getElementById('adminBtn').classList.add('hidden');
-  }
 
   document.getElementById('recordAmount').value = '';
 
@@ -990,6 +983,14 @@ async function initApp() {
 
 
   await loadFromCloud();
+
+  if (allData.users[currentUser] && allData.users[currentUser].isAdmin) {
+    isAdmin = true;
+    document.getElementById('adminBtn').classList.remove('hidden');
+  } else {
+    isAdmin = false;
+    document.getElementById('adminBtn').classList.add('hidden');
+  }
 
   buildUserDropdowns();
 
