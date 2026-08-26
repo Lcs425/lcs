@@ -261,6 +261,7 @@ input,select,button{max-width:100%}
 .record-filter-row .rf-select{padding:6px 10px;border:1px solid #d9d9d9;border-radius:6px;font-size:13px;outline:none;min-height:36px;background:#fff;color:#333;flex:1;max-width:200px}
 
 .record-filter-row .rf-date{padding:6px 8px;border:1px solid #d9d9d9;border-radius:6px;font-size:13px;outline:none;min-height:36px;background:#fff;color:#333;color-scheme:light;flex:1}
+.rf-text{padding:6px 10px;border:1px solid #d9d9d9;border-radius:6px;font-size:13px;outline:none;min-height:36px;background:#fff;color:#333;flex:1;max-width:200px}.rf-text:focus{border-color:#4a90d9}
 
 .record-filter-row .rf-clear{padding:6px 20px;border:1px solid #d9d9d9;background:#fff;border-radius:6px;font-size:13px;cursor:pointer;color:#666;min-height:36px;white-space:nowrap}
 
@@ -435,6 +436,14 @@ input,select,button{max-width:100%}
           <span class="rf-label">结束日期</span>
 
           <input type="date" id="recordDateTo" class="rf-date">
+
+        </div>
+
+        <div class="rf-row rf-desc-row">
+
+          <span class="rf-label">描述：</span>
+
+          <input type="text" id="recordDescFilter" class="rf-text" placeholder="按描述关键词查询">
 
         </div>
 
@@ -1049,6 +1058,8 @@ async function initApp() {
 
   document.getElementById('recordDateTo').onchange = renderRecords;
 
+  document.getElementById('recordDescFilter').oninput = renderRecords;
+
   document.getElementById('clearRecordFilter').onclick = function() {
 
     document.getElementById('recordUserFilter').value = 'all';
@@ -1056,6 +1067,8 @@ async function initApp() {
     document.getElementById('recordDateFrom').value = '';
 
     document.getElementById('recordDateTo').value = '';
+
+    document.getElementById('recordDescFilter').value = '';
 
     renderRecords();
 
@@ -1083,7 +1096,7 @@ async function initApp() {
 
 
 
-function getUserRecords(filterUser, dateFrom, dateTo) {
+function getUserRecords(filterUser, dateFrom, dateTo, keyword) {
   var records = (allData.records || []);
   if (!isAdmin) {
     var visibleUsers = getVisibleUsers();
@@ -1094,6 +1107,10 @@ function getUserRecords(filterUser, dateFrom, dateTo) {
   }
   if (dateFrom) records = records.filter(function(r) { return r.date >= dateFrom; });
   if (dateTo) records = records.filter(function(r) { return r.date <= dateTo; });
+  if (keyword) {
+    keyword = keyword.toLowerCase();
+    records = records.filter(function(r) { return (r.desc || '').toLowerCase().indexOf(keyword) !== -1; });
+  }
   return records.sort(function(a, b) { return b.date.localeCompare(a.date) || b.id - a.id; });
 }
 
@@ -1489,7 +1506,9 @@ function renderRecords() {
 
   var dateTo = document.getElementById('recordDateTo').value;
 
-  var records = getUserRecords(ruf, dateFrom, dateTo);
+  var keyword = document.getElementById('recordDescFilter').value.trim();
+
+  var records = getUserRecords(ruf, dateFrom, dateTo, keyword);
 
   var container = document.getElementById('recordListContainer');
 
